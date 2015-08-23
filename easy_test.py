@@ -1043,6 +1043,28 @@ import os
 import sys
 import os
 import sys
+import shutil
+
+def increaseSolvedCnt( d ):
+	tempName = os.path.dirname(os.path.abspath( __file__ ));
+	file1 = os.path.join(tempName, "history.txt")
+	file2 = os.path.join(tempName, "history_temp.txt")
+	
+	cnt = 0
+	try:
+		with open(file1, 'r') as f:
+			cnt = int(f.readline())
+	except:
+		pass
+
+	cnt += d
+	with open(file2, 'w') as f:
+		f.write("%d" % cnt)
+
+	shutil.move(file2, file1)
+	return cnt
+
+
 
 def askForQuit():
 	while True:
@@ -1165,8 +1187,9 @@ def testEx():
 		try:
 			funcs = initFuncs(testLst, tempName, cnt)
 			testFuncs(funcs)
+			totalProgress = increaseSolvedCnt(len(funcs))
 			progress += len(funcs)
-			print "====================(%d/%d)==================" % (progress, totalCnt)
+			print "====================(%d/%d, totalProgress:%d)==================" % (progress, totalCnt, totalProgress)
 		except KeyboardInterrupt:
 			askForQuit()
 				
