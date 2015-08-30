@@ -895,45 +895,271 @@ def testSearchMatrix():
 
 	print "testSearchMatrix done!"
 
+def testSortColors():
+	testCase = [
+		([], []),
+	]
+	for i in xrange(0, 100):
+		lst = [random.randint(0,2) for x in xrange(0,100)]
+		testCase.append( (lst, sorted(lst)) )
+
+	for case in testCase:
+		lst1 = [x for x in case[0]]
+		test_module.sortColors(lst1)
+		lst2 = [x for x in case[0]]
+		test_module.sortColors2(lst2)
+		if lst1 != lst2 or lst1 != case[1]:
+			raise RuntimeError("testSortColors failed!!")
+
+	print "testSortColors done!"
+
+def testNumCombine():
+	testCase = [
+		(2, 1, [[1], [2]]),
+		(2, 0, []),
+		(0, 1, []),
+		(0, 0, []),
+		(1, 0, []),
+		(1, 1, [[1]]),
+		(1, 2, []),
+		(4, 3, [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]),
+		(4, 2, [[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]),
+		(4, 1, [[1], [2], [3], [4]]),
+		(5, 2, [[1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5], [4, 5]]),
+	]
+	for case in testCase:
+		ret1 = sorted(test_module.numCombine(case[0], case[1]))
+		ret2 = sorted(test_module.numCombine2(case[0], case[1]))
+		if ret1 != ret2 or ret1 != case[2]:
+			raise RuntimeError("testNumCombine failed!! %d %d" % (case[0], case[1]))
+
+	print "testNumCombine done!"
+
+def testSubsets():
+	testCase = [
+		([], [[]]),
+		([1,2,3], [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]),
+	]
+	
+	for case in testCase:
+		if sorted(test_module.subsets(case[0])) != case[1]:
+			print sorted(test_module.subsets(case[0]))
+			raise RuntimeError("testSubsets failed!")
+
+	print "testSubsets done!"
+
+def testWordSearch():
+	testCase = [
+		(["a"], "a", True),
+		([['a', 'a', 'a', 'a'], ['a', 'a', 'a', 'a'], ['a', 'a', 'a', 'a']], "aaaaaaaaaaab", False),
+		([['A', 'B', 'C', 'E'], ['S', 'F', 'C', 'S'], ['A', 'D', 'E', 'E']], "ABCCED", True),
+		([['A', 'B', 'C', 'E'], ['S', 'F', 'C', 'S'], ['A', 'D', 'E', 'E']], "SEE", True),
+		([['A', 'B', 'C', 'E'], ['S', 'F', 'C', 'S'], ['A', 'D', 'E', 'E']], "ABCB", False),
+	]
+
+	for case in testCase:
+		if test_module.wordSearch(case[0], case[1]) != case[2]:
+			raise RuntimeError("testWordSearch failed! %s %s" % (case[0], case[1]) )
+
+	print "testWordSearch done!"
+
+def testRemoveDuplicates2():
+	testCase = [
+		([1,1,1,2,2,3], [1,1,2,2,3]),
+		([], []),
+		([1], [1],),
+		([1,2],[1,2],),
+		([1,1,2], [1,1,2]),
+		([1,1,1], [1,1]),
+		([0, 0, 1, 1, 1, 1, 1, 2, 3, 3, 4, 5, 6, 6, 6, 7], [0, 0, 1, 1, 2, 3, 3, 4, 5, 6, 6, 7]),
+		([0, 0, 1, 1, 1, 1, 2, 2, 3, 4, 5, 5, 5, 6, 6, 7], [0, 0, 1, 1, 2, 2, 3, 4, 5, 5, 6, 6, 7]),
+		([0, 0, 1, 2, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 7], [0, 0, 1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7]),
+		([0, 1, 1, 2, 2, 2, 2, 4, 4, 5, 5, 6, 6, 7, 7], [0, 1, 1, 2, 2, 4, 4, 5, 5, 6, 6, 7, 7]),
+		([0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 7, 7], [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 7, 7]),
+		([0, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 4, 5, 6, 7], [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 7]),
+		([0, 1, 1, 2, 2, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7], [0, 1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7]),
+		([1, 1, 1, 2, 2, 2, 2, 4, 4, 4, 5, 5, 6, 6, 6, 7], [1, 1, 2, 2, 4, 4, 5, 5, 6, 6, 7]),
+		([0, 0, 0, 0, 1, 1, 2, 3, 3, 3, 4, 4, 4, 5, 7], [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 7]),
+		([0, 1, 1, 3, 5, 5, 6, 6, 6, 7, 7, 7, 7, 7, 7], [0, 1, 1, 3, 5, 5, 6, 6, 7, 7]),
+		([0, 1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 6, 6, 7], [0, 1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 7]),
+		([0, 0, 1, 1, 1, 1, 2, 3, 4, 5, 5, 6, 6, 6, 7], [0, 0, 1, 1, 2, 3, 4, 5, 5, 6, 6, 7]),
+		([0, 1, 2, 2, 2, 2, 2, 3, 3, 4, 4, 6, 6, 7, 7, 7], [0, 1, 2, 2, 3, 3, 4, 4, 6, 6, 7, 7]),
+		([0, 0, 1, 1, 2, 2, 4, 4, 5, 5, 5, 6, 6, 7, 7], [0, 0, 1, 1, 2, 2, 4, 4, 5, 5, 6, 6, 7, 7]),
+		([0, 0, 0, 1, 1, 1, 3, 4, 4, 4, 5, 5, 5, 5, 7], [0, 0, 1, 1, 3, 4, 4, 5, 5, 7]),
+		([0, 0, 0, 1, 1, 2, 2, 3, 5, 5, 5, 6, 6, 6, 7, 7], [0, 0, 1, 1, 2, 2, 3, 5, 5, 6, 6, 7, 7]),
+		([1, 1, 1, 1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7], [1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7]),
+		([0, 0, 1, 2, 2, 3, 3, 4, 4, 5, 5, 5, 6, 7, 7], [0, 0, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7, 7]),
+		([0, 0, 1, 1, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 7, 7], [0, 0, 1, 1, 2, 3, 4, 5, 6, 6, 7, 7]),
+		([0, 1, 1, 2, 4, 4, 5, 5, 6, 6, 6, 6, 6, 7, 7], [0, 1, 1, 2, 4, 4, 5, 5, 6, 6, 7, 7]),
+	]
+
+	for case in testCase:
+		pos = test_module.removeDuplicates2(case[0])
+		if case[0][:pos] != case[1]:
+			raise RuntimeError("removeDuplicates2 failed!!")
+
+	print "removeDuplicates2 done!"
+
+def testDeleteDuplicatesSL2():
+	testCase = [
+		([1,1,1], "None"), ([1,1], "None"), ([1], "1"), ([1,2,2], "1"), ([1,1,2,2], "None"), ([], "None"),
+		([3, 5, 2, 5, 4, 6, 10, 5, 6, 6, 6, 2, 6, 1, 6, 4, 5, 6, 8, 4, 4, 3, 5], "3,5,2,5,4,6,10,5,2,6,1,6,4,5,6,8,3,5"),
+		([1, 6, 2, 5, 5, 6, 2, 9, 2, 4, 2, 2, 8, 3, 3, 10, 8, 5, 2, 5, 5], "1,6,2,6,2,9,2,4,8,10,8,5,2"),
+		([10, 3, 2, 1, 3, 9, 4, 3, 1, 8, 8, 9, 5, 3, 4, 10, 10, 3, 2, 10, 1, 4, 5, 6], "10,3,2,1,3,9,4,3,1,9,5,3,4,3,2,10,1,4,5,6"),
+		([10, 7, 2, 1, 9, 5, 2, 3, 5, 9, 4, 8, 1, 2, 2, 6, 10, 1, 6, 1, 9], "10,7,2,1,9,5,2,3,5,9,4,8,1,6,10,1,6,1,9"),
+		([5, 5, 10, 5, 10, 7, 4, 1, 7, 6, 6, 7, 1, 3, 5, 2, 6, 5, 4, 9, 4], "10,5,10,7,4,1,7,7,1,3,5,2,6,5,4,9,4"),
+		([7, 5, 4, 2, 2, 10, 6, 8, 5, 10, 8, 10, 5, 3, 5, 9, 5, 10, 7, 2, 9, 8, 9, 6], "7,5,4,10,6,8,5,10,8,10,5,3,5,9,5,10,7,2,9,8,9,6"),
+		([9, 8, 8, 3, 9, 3, 8, 10, 2, 4, 3, 9, 7, 4, 3, 1, 9, 3, 5, 9, 1], "9,3,9,3,8,10,2,4,3,9,7,4,3,1,9,3,5,9,1"),
+		([10, 6, 10, 4, 10, 6, 2, 3, 8, 9, 6, 6, 7, 1, 2, 8, 9, 10, 3, 9, 3], "10,6,10,4,10,6,2,3,8,9,7,1,2,8,9,10,3,9,3"),
+		([2, 4, 1, 9, 10, 4, 10, 1, 8, 10, 1, 2, 5, 7, 2, 10, 2, 8, 5, 2, 10], "2,4,1,9,10,4,10,1,8,10,1,2,5,7,2,10,2,8,5,2,10"),
+		([4, 8, 10, 1, 7, 6, 2, 9, 6, 2, 7, 10, 10, 6, 2, 2, 7, 6, 7, 2, 1, 5, 6], "4,8,10,1,7,6,2,9,6,2,7,6,7,6,7,2,1,5,6"),
+		([7, 6, 3, 3, 7, 1, 1, 10, 9, 6, 9, 7, 3, 5, 4, 10, 3, 5, 8, 5, 1, 8, 1, 4], "7,6,7,10,9,6,9,7,3,5,4,10,3,5,8,5,1,8,1,4"),
+		([8, 1, 6, 1, 3, 6, 3, 1, 10, 4, 5, 3, 1, 3, 4, 1, 8, 5, 4, 5], "8,1,6,1,3,6,3,1,10,4,5,3,1,3,4,1,8,5,4,5"),
+		([2, 1, 4, 5, 7, 8, 4, 3, 10, 9, 2, 1, 7, 3, 10, 1, 6, 2, 6, 6, 2], "2,1,4,5,7,8,4,3,10,9,2,1,7,3,10,1,6,2,2"),
+		([9, 9, 4, 5, 8, 9, 9, 9, 6, 7, 5, 2, 9, 6, 8, 7, 5, 4, 8, 2, 1, 7, 3], "4,5,8,6,7,5,2,9,6,8,7,5,4,8,2,1,7,3"),
+		([3, 10, 4, 10, 2, 9, 10, 9, 4, 5, 4, 6, 7, 6, 2, 5, 6, 4, 6, 3, 4], "3,10,4,10,2,9,10,9,4,5,4,6,7,6,2,5,6,4,6,3,4"),
+		([1, 6, 1, 3, 8, 1, 6, 7, 2, 9, 9, 2, 3, 7, 2, 1, 7, 2, 2, 2, 3, 8], "1,6,1,3,8,1,6,7,2,2,3,7,2,1,7,3,8"),
+		([3, 1, 4, 4, 9, 3, 7, 6, 3, 5, 2, 8, 3, 10, 3, 4, 8, 6, 1, 6, 4, 2, 6], "3,1,9,3,7,6,3,5,2,8,3,10,3,4,8,6,1,6,4,2,6"),
+		([5, 10, 10, 4, 8, 3, 5, 5, 9, 8, 8, 2, 7, 2, 10, 2, 9, 4, 3, 6, 2, 7, 2, 6, 9], "5,4,8,3,9,2,7,2,10,2,9,4,3,6,2,7,2,6,9"),
+		([6, 3, 10, 5, 4, 8, 9, 8, 9, 2, 2, 2, 2, 9, 4, 8, 9, 7, 2, 5, 5, 6, 3], "6,3,10,5,4,8,9,8,9,9,4,8,9,7,2,6,3"),
+		([3, 4, 4, 2, 7, 4, 2, 1, 6, 3, 8, 1, 10, 5, 8, 1, 2, 9, 1, 2], "3,2,7,4,2,1,6,3,8,1,10,5,8,1,2,9,1,2"),
+	]
+
+	for case in testCase:
+		lst = linked_list.createLinkedLst(case[0])
+		lst2 = linked_list.createLinkedLst(case[0])
+		ret1 = str(test_module.deleteDuplicates(lst))
+		ret2 = str(test_module.deleteDuplicates2(lst2))
+		if ret1 != ret2 or ret1 != case[1]:
+			raise RuntimeError("testDeleteDuplicatesSL2 failed! %s" % str(case[0]))
+
+	print "testDeleteDuplicatesSL2 done!"
+
+def testSearchInRotatedSortedArray():
+	testCase = [
+		([3,1], 1, True),
+		([1,3,1,1], 3, True), ([1,2,0,1,1,1], 0, True), ([1,3], 1, True), ([1], 0, False), ([3,1], 2, False), ([1], 0, False), ([3,1], 1, True),
+		([8, 9, 9, 10, 11, 11, 12, 13, 14, 14, 15, 16, 17, 0, 0, 1, 1, 1, 3, 4, 4, 5, 6, 6, 7, 8], 18, False),
+		([0, 1, 1, 2, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 10, 10, 11, 12, 12, 12, 13, 14, 14, 14, 14, 15, 16, 17], 16, True),
+		([12, 12, 13, 13, 14, 14, 14, 14, 16, 16, 17, 2, 3, 4, 6, 6, 7, 7, 7, 7, 8, 8, 9, 9, 10, 11, 11, 12, 12], 7, True),
+		([13, 14, 14, 15, 15, 16, 17, 17, 17, 1, 2, 4, 5, 6, 6, 6, 6, 8, 9, 10, 10, 11, 12, 12, 12, 12, 13], 18, False),
+		([4, 5, 5, 6, 6, 8, 9, 9, 11, 11, 11, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17, 0, 0, 1, 1, 2, 3, 4], -1, False),
+		([4, 5, 5, 8, 8, 8, 8, 8, 9, 11, 11, 11, 11, 12, 12, 13, 14, 15, 17, 17, 0, 1, 1, 3, 3, 4, 4, 4], 4, True),
+		([3, 4, 5, 7, 8, 9, 10, 10, 11, 12, 12, 13, 14, 14, 15, 15, 15, 16, 17, 0, 1, 1, 1, 1, 1, 1, 2, 3, 3, 3], 0, True),
+		([8, 11, 11, 11, 12, 13, 13, 13, 14, 15, 15, 16, 0, 1, 2, 3, 3, 3, 3, 4, 4, 5, 5, 6, 7, 7], 15, True),
+		([16, 0, 0, 1, 1, 1, 3, 3, 4, 5, 6, 6, 6, 7, 7, 7, 7, 8, 9, 9, 9, 11, 11, 12, 14, 14, 14, 14], 7, True),
+		([2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 6, 9, 9, 9, 9, 10, 10, 11, 13, 13, 13, 14, 14, 15, 15, 16, 0, 0, 1], 3, True),
+		([0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 7, 8, 8, 8, 8, 12, 12, 13, 13, 15, 16, 16, 16, 16], 18, False),
+		([9, 10, 11, 11, 12, 13, 13, 14, 15, 16, 17, 0, 1, 2, 2, 2, 2, 3, 3, 4, 5, 5, 5, 5, 5, 6, 6, 6, 8], 3, True),
+		([3, 4, 5, 5, 7, 9, 9, 9, 10, 10, 11, 11, 11, 11, 11, 14, 14, 15, 16, 16, 17, 0, 1, 2, 2, 2], 18, False),
+		([1, 3, 3, 3, 3, 4, 4, 5, 6, 6, 7, 8, 8, 8, 11, 11, 11, 12, 13, 13, 14, 14, 15, 15, 15, 17, 1, 1, 1], 18, False),
+		([16, 16, 17, 17, 0, 0, 1, 1, 3, 4, 5, 6, 6, 6, 7, 8, 8, 8, 8, 11, 13, 13, 14, 14, 15, 16], 18, False),
+		([1, 3, 3, 4, 4, 5, 6, 8, 9, 9, 11, 11, 12, 12, 12, 13, 13, 15, 17, 17, 17, 0, 0, 0, 0, 1], 18, False),
+		([16, 16, 16, 17, 0, 0, 1, 2, 3, 3, 3, 4, 4, 4, 4, 6, 6, 7, 7, 8, 8, 9, 10, 11, 12, 13, 13, 15], 7, True),
+		([17, 17, 1, 1, 2, 3, 4, 5, 5, 5, 6, 7, 7, 7, 7, 9, 9, 12, 13, 13, 13, 13, 13, 14, 15, 15, 15, 17], 18, False),
+		([2, 2, 3, 4, 4, 7, 7, 7, 8, 9, 9, 9, 9, 10, 11, 13, 13, 14, 14, 16, 16, 17, 17, 0, 1, 1], 2, True),
+		([7, 8, 8, 8, 8, 9, 9, 9, 10, 10, 11, 12, 13, 14, 14, 15, 16, 0, 0, 2, 2, 3, 3, 6, 6, 7], 16, True),
+		([0, 2, 3, 4, 4, 5, 5, 6, 7, 7, 9, 10, 11, 11, 12, 12, 12, 12, 14, 14, 14, 15, 15, 15, 15, 16, 16, 17, 0], -1, False),
+		([12, 12, 13, 13, 13, 14, 16, 16, 17, 17, 0, 1, 3, 3, 4, 4, 5, 6, 6, 7, 9, 9, 10, 11, 11, 11], 17, True),
+		([17, 17, 2, 2, 2, 2, 2, 3, 3, 3, 5, 5, 6, 7, 8, 10, 11, 12, 12, 13, 14, 14, 14, 15, 15, 17], 5, True),
+		([10, 10, 10, 10, 11, 11, 11, 12, 12, 13, 14, 14, 15, 16, 1, 2, 4, 6, 6, 6, 6, 7, 8, 9, 9, 9, 10], 15, True),
+		([15, 15, 17, 0, 1, 2, 2, 2, 3, 5, 5, 5, 5, 6, 7, 7, 10, 10, 10, 10, 10, 10, 11, 12, 12, 13], 18, False),
+	]
+
+	for case in testCase:
+		if test_module.searchInRotatedSortedArray(case[0], case[1]) != case[2]:
+			raise RuntimeError("testSearchInRotatedSortedArray failed!! %s %d" % (str(case[0]), case[1]))
+
+	print "testSearchInRotatedSortedArray done!"
+
+
+def testPartitionList():
+	testCase = [
+		([], 3, "None"),
+		([3, 2, 10, 2, 6, 8, 3, 1, 0, 4, 3, 9, 4, 6, 9], 3, "2,2,1,0,3,10,6,8,3,4,3,9,4,6,9"),
+		([5, 10, 2, 1, 5, 8, 7, 9, 0, 9, 1, 9, 2, 10, 9, 9, 9], 2, "1,0,1,5,10,2,5,8,7,9,9,9,2,10,9,9,9"),
+		([6, 5, 0, 2, 5, 3, 2, 3, 3, 7, 10, 1, 9, 0, 4], 3, "0,2,2,1,0,6,5,5,3,3,3,7,10,9,4"),
+		([0, 1, 7, 3, 8, 3, 6, 6, 2, 5, 10, 6, 9, 1, 7, 8, 8, 4], 3, "0,1,2,1,7,3,8,3,6,6,5,10,6,9,7,8,8,4"),
+		([4, 0, 10, 0, 4, 0, 3, 9, 5, 5, 1, 7, 7, 8, 4, 1], 9, "4,0,0,4,0,3,5,5,1,7,7,8,4,1,10,9"),
+		([3, 8, 5, 5, 3, 5, 2, 6, 7, 2, 6, 8, 0, 0, 9], 8, "3,5,5,3,5,2,6,7,2,6,0,0,8,8,9"),
+		([10, 1, 8, 10, 1, 0, 1, 10, 1, 10, 5, 2, 1, 4, 1], 1, "0,10,1,8,10,1,1,10,1,10,5,2,1,4,1"),
+		([7, 7, 7, 4, 0, 3, 7, 6, 8, 6, 0, 5, 0, 3, 6], 3, "0,0,0,7,7,7,4,3,7,6,8,6,5,3,6"),
+		([1, 9, 5, 9, 6, 5, 0, 1, 8, 9, 8, 8, 10, 9, 10], 9, "1,5,6,5,0,1,8,8,8,9,9,9,10,9,10"),
+		([10, 0, 0, 1, 4, 9, 2, 5, 6, 8, 1, 4, 0, 8, 7], 7, "0,0,1,4,2,5,6,1,4,0,10,9,8,8,7"),
+		([1, 3, 1, 10, 5, 2, 4, 10, 3, 1, 8, 6, 3, 0, 3, 9, 1, 10, 2], 2, "1,1,1,0,1,3,10,5,2,4,10,3,8,6,3,3,9,10,2"),
+		([2, 6, 7, 1, 9, 3, 5, 8, 10, 2, 1, 1, 9, 1, 2], 1, "2,6,7,1,9,3,5,8,10,2,1,1,9,1,2"),
+		([3, 10, 8, 3, 1, 6, 5, 4, 3, 10, 0, 8, 6, 5, 7, 9, 9], 10, "3,8,3,1,6,5,4,3,0,8,6,5,7,9,9,10,10"),
+		([5, 5, 4, 0, 2, 1, 7, 3, 0, 6, 9, 4, 7, 3, 9, 1, 10, 5, 10, 6], 7, "5,5,4,0,2,1,3,0,6,4,3,1,5,6,7,9,7,9,10,10"),
+		([3, 5, 2, 10, 5, 10, 9, 8, 5, 5, 6, 10, 7, 1, 10, 6, 0, 7], 5, "3,2,1,0,5,10,5,10,9,8,5,5,6,10,7,10,6,7"),
+		([2, 6, 7, 3, 2, 0, 6, 8, 10, 6, 2, 9, 1, 8, 10], 8, "2,6,7,3,2,0,6,6,2,1,8,10,9,8,10"),
+		([4, 3, 6, 7, 0, 0, 3, 8, 9, 6, 9, 9, 1, 1, 0, 10, 8, 5, 4], 9, "4,3,6,7,0,0,3,8,6,1,1,0,8,5,4,9,9,9,10"),
+		([10, 4, 6, 2, 4, 1, 1, 9, 3, 6, 1, 10, 10, 8, 8], 3, "2,1,1,1,10,4,6,4,9,3,6,10,10,8,8"),
+		([3, 0, 5, 1, 4, 3, 5, 6, 5, 8, 8, 6, 2, 10, 2, 0, 3, 5, 2], 2, "0,1,0,3,5,4,3,5,6,5,8,8,6,2,10,2,3,5,2"),
+		([3, 7, 1, 6, 0, 7, 9, 1, 1, 4, 10, 7, 5, 3, 1], 7, "3,1,6,0,1,1,4,5,3,1,7,7,9,10,7"),
+		([1, 0, 7, 0, 9, 5, 7, 1, 7, 2, 2, 9, 1, 2, 10, 10, 1], 2, "1,0,0,1,1,1,7,9,5,7,7,2,2,9,2,10,10"),
+		([0, 10, 0, 2, 0, 9, 3, 2, 9, 9, 1, 9, 3, 0, 4], 9, "0,0,2,0,3,2,1,3,0,4,10,9,9,9,9"),
+		([4, 4, 5, 5, 0, 9, 9, 3, 8, 4, 3, 9, 0, 0, 2, 4, 4], 0, "4,4,5,5,0,9,9,3,8,4,3,9,0,0,2,4,4"),
+		([4, 3, 10, 7, 4, 1, 2, 10, 0, 6, 4, 10, 8, 0, 5, 3, 8], 8, "4,3,7,4,1,2,0,6,4,0,5,3,10,10,10,8,8"),
+		([9, 4, 6, 1, 6, 4, 3, 8, 5, 10, 1, 6, 5, 1, 3, 5, 2, 4, 1, 7], 4, "1,3,1,1,3,2,1,9,4,6,6,4,8,5,10,6,5,5,4,7"),
+	]
+
+	for case in testCase:
+		lst = linked_list.createLinkedLst(case[0])
+		if str(test_module.partitionList(lst, case[1])) != case[2]:
+			raise RuntimeError("testPartitionList failed!!")
+
+	print "testPartitionList done!"
+
+
+
+
 
 tests = [
-	#(testTwoSum, "def twoSum(nums, target):"),
-	#(testAddTwoNumbers, "def addTwoNumbers(l1, l2):"),
-	#(testLongestSubstring, "def lengthOfLongestSubstring(s):"),
-	#(testLongestPalindrome, "def longestPalindrome(s):"),
-	#(testMaxArea, "def maxArea(height):"),
-	#(testThreeSum, "def threeSum(nums):"),
-	#(testThreeSumClosest, "def threeSumClosest(nums, target):"),
-	#(testLetterCombinations, "def letterCombinations(digits, dict):"),
-	#(testFourSum, "def fourSum(nums, target):"),
-	#(testGenerateParenthesis, "def generateParenthesis(n):"),
-	#(testSwapPairs, "def swapPairs(head):\n\ndef swapPairs2(head):"), 
-	#(testDivide, "def divide(a, b):"), 
+	# (testTwoSum, "def twoSum(nums, target):"),
+	# (testAddTwoNumbers, "def addTwoNumbers(l1, l2):"),
+	# (testLongestSubstring, "def lengthOfLongestSubstring(s):"),
+	# (testLongestPalindrome, "def longestPalindrome(s):"),
+	# (testMaxArea, "def maxArea(height):"),
+	# (testThreeSum, "def threeSum(nums):"),
+	# (testThreeSumClosest, "def threeSumClosest(nums, target):"),
+	# (testLetterCombinations, "def letterCombinations(digits, dict):"),
+	# (testFourSum, "def fourSum(nums, target):"),
+	# (testGenerateParenthesis, "def generateParenthesis(n):"),
+	# (testSwapPairs, "def swapPairs(head):\n\ndef swapPairs2(head):"), 
+	# (testDivide, "def divide(a, b):"), 
 
-	(testNextPermutation, "def nextPermutation(nums):"), 
-	(testSearchRange, "def searchRange(nums, target):"),
-	(testSearchInsert, "def searchInsert(nums, target):"),
-	(testCombinationSum, "def combinationSum(candidates, target):"),
-	(testCombinationSum2, "def combinationSum2(candidates, target):"), 
-	(testMultiplyString, "def multiplyString(num1, num2):"),
-	(testPermutations, "def permute(nums):"), 
-	(testRotateMatrix, "def rotateMatrix(matrix):"),
-	(testAnagrams, "def anagrams(strs):"),
-	(testPow, "def pow(x, n):\n\ndef pow2(x, n):"),
+	# (testNextPermutation, "def nextPermutation(nums):"), 
+	# (testSearchRange, "def searchRange(nums, target):"),
+	# (testSearchInsert, "def searchInsert(nums, target):"),
+	# (testCombinationSum, "def combinationSum(candidates, target):"),
+	# (testCombinationSum2, "def combinationSum2(candidates, target):"), 
+	# (testMultiplyString, "def multiplyString(num1, num2):"),
+	# (testPermutations, "def permute(nums):"), 
+	# (testRotateMatrix, "def rotateMatrix(matrix):"),
+	# (testAnagrams, "def anagrams(strs):"),
+	# (testPow, "def pow(x, n):\n\ndef pow2(x, n):"),
 
-	(testMaxSubArray, "def maxSubArray(nums):"),
-	(testSpiralOrder, "def spiralOrder(matrix):"), 
-	(testJumpGame, "def canJump(nums):"),
-	(testGenerateMatrix, "#Tag: Array\ndef generateMatrix(n):"),
-	(testGetPermutation, "#Tag: Backtracking Math\ndef getPermutation(n, k):"),
-	(testRotateRight, "#Tag: Linked List Two Pointers\ndef rotateRight(head, k):"),
-	(testUniquePaths, "#Tag: Array, Dynamic Programming\ndef uniquePaths(m, n):\n\n\ndef uniquePaths2(m, n):"),
-	(testUniquePathsWithObstacles, "#Tag: Array, Dynamic Programming\ndef uniquePathsWithObstacles(obstacleGrid):"),
-	(testMinPathSum, "#Tag: Array, Dynamic Programming\ndef minPathSum(grid):"),
-	(testMySqrt, "#Tag: Math, Binary Search\ndef mySqrt(x):\n\n\ndef mySqrt2(x):"),
+	# (testMaxSubArray, "def maxSubArray(nums):"),
+	# (testSpiralOrder, "def spiralOrder(matrix):"), 
+	# (testJumpGame, "def canJump(nums):"),
+	# (testGenerateMatrix, "#Tag: Array\ndef generateMatrix(n):"),
+	# (testGetPermutation, "#Tag: Backtracking Math\ndef getPermutation(n, k):"),
+	# (testRotateRight, "#Tag: Linked List Two Pointers\ndef rotateRight(head, k):"),
+	# (testUniquePaths, "#Tag: Array, Dynamic Programming\ndef uniquePaths(m, n):\n\n\ndef uniquePaths2(m, n):"),
+	# (testUniquePathsWithObstacles, "#Tag: Array, Dynamic Programming\ndef uniquePathsWithObstacles(obstacleGrid):"),
+	# (testMinPathSum, "#Tag: Array, Dynamic Programming\ndef minPathSum(grid):"),
+	# (testMySqrt, "#Tag: Math, Binary Search\ndef mySqrt(x):\n\n\ndef mySqrt2(x):"),
 
-	#(testSetZeroes, "#tag: Array\ndef setZeroes(matrix):"), 
-	#(testSearchMatrix, "#Tad: Binary Search, Array\ndef searchMatrix(matrix, target):"),
+	(testSetZeroes, "#tag: Array\ndef setZeroes(matrix):"), 
+	(testSearchMatrix, "#Tad: Binary Search, Array\ndef searchMatrix(matrix, target):"),
+	(testSortColors, "#Tag: Array, Two Pointers, Sort\ndef sortColors(nums):\n\n\ndef sortColors2(nums):"),
+	(testNumCombine, "#Tag: Backtracking\ndef numCombine(n, k):"),
+	(testSubsets, "#Tag: Array, Backtracking, Bit Manipulation\ndef subsets(nums):"),
+	(testWordSearch, "#Tag:  Array, Backtracking\ndef wordSearch(board, word):"),
+	(testRemoveDuplicates2, "#tag: Array, Two Pointers\ndef removeDuplicates2(nums):"), 
+	(testSearchInRotatedSortedArray, "#Tag: Array, Binary Search\ndef searchInRotatedSortedArray(nums, target):"),
+	(testDeleteDuplicatesSL2, "#Remove Duplicates from Sorted List II \ndef deleteDuplicates(head):\n\n\ndef deleteDuplicates2(head):"),
+	(testPartitionList, "#Tag: Linked List, Two Pointers\ndef partitionList(head, x):")
 ]	
 
 import os

@@ -648,32 +648,195 @@ def setZeroes(matrix):
 #Search a 2D Matrix 
 #Tad: Binary Search, Array
 def searchMatrix(matrix, target):
-    if not matrix:
-        return False
-        
-    lo, hi = 0, len(matrix)
-    while lo < hi:
-        mid = lo + (hi-lo)/2
-        if matrix[mid][0] == target:
-            return True
-        elif matrix[mid][0] < target:
-            lo = mid + 1
-        else:
-            hi = mid
-            
-    i = max(0, min(lo-1, len(matrix)-1))
-
-    lo, hi = 0, len(matrix[i])
-    while lo < hi:
+    def search(lst, lo, hi, target):
+        if hi - lo < 1:
+            return False, lo-1 if 0 < lo <= len(lst) else None 
         mid = lo + (hi - lo)/2
-        if matrix[i][mid] == target:
-            return True
-        elif matrix[i][mid] < target:
-            lo = mid + 1
+        val = lst[mid] if isinstance(lst[mid], int) else lst[mid][0]
+        if val == target:
+            return True, mid
+        elif val < target:
+            return search(lst, mid+1, hi, target)
+        return search(lst, lo, mid, target)
+
+    found, idx = search(matrix, 0, len(matrix), target)
+    return True if found else idx != None and search(matrix[idx], 0, len(matrix[idx]), target)[0]
+
+#Sort Colors
+#Tag: Array, Two Pointers, Sort
+def sortColors(nums):
+    left, right, pt = 0, len(nums)-1, 0
+    while pt <= right:
+        if nums[pt] == 0:
+            nums[pt], nums[left] = nums[left], nums[pt]
+            pt += 1
+            left += 1
+        elif nums[pt] == 1:
+            pt += 1
         else:
-            hi = mid
-    
-    return False
+            nums[pt], nums[right] = nums[right], nums[pt]
+            right -= 1
+
+def sortColors2(nums):
+    cnt = [0,0,0]
+    for n in nums:
+        cnt[n] += 1
+    r = 0
+    for i in xrange(0, len(cnt)):
+        for j in xrange(0, cnt[i]):
+            nums[r] = i
+            r += 1
+
+
+#Combinations
+#Tag: Backtracking 
+def numCombine(n, k):
+    def collect(ret, temp, start, n, k):
+        if k == 0:
+            if temp:
+                ret.append(temp)
+            return
+        for i in xrange(start, n+1):
+            collect(ret, temp + [i], i+1, n, k-1)
+            
+    ret = []    
+    collect(ret, [], 1, n, k)
+    return ret
+
+def numCombine2(n, k):
+    if k == 0:
+        return []
+    combs = [[]]
+    for _ in range(k):
+        combs = [[i] + c for c in combs for i in range(1, c[0] if c else n+1)]
+    return combs
 
    
+#Subsets
+#Tag: Array, Backtracking, Bit Manipulation
+def subsets2(nums):
+    nums.sort()
+    ret = []
+    for n in nums:
+        for i in xrange(len(ret)):
+            ret.append(ret[i] + [n])
+        ret.append([n])
+    ret.append([])
+    return ret
 
+#https://leetcode.com/discuss/46668/recursive-iterative-manipulation-solutions-explanations
+def subsets(nums):
+    nums.sort()
+    num_subset = 1 << len(nums)
+    res = [[] for x in xrange(0, num_subset)]
+    for i in xrange(0, len(nums)):
+        step = 1 << i
+        for j in xrange(step, num_subset, step*2):
+            for k in xrange(j, j+step):
+                    res[k].append(nums[i])
+    return res
+
+
+#Word Search
+#Tag:  Array, Backtracking
+def wordSearch(board, word):
+    def check(board, i, j, word, pos):
+        if i < 0 or i >= len(board) or\
+            j < 0 or j >= len(board[0]) or\
+            board[i][j] != word[pos]:
+                return False
+        elif pos == len(word) - 1:
+            return True
+        
+        old, board[i][j] = board[i][j], '*'    
+        
+        checkConnection = check(board, i-1, j, word, pos+1) or \
+            check(board, i+1, j, word, pos+1) or \
+            check(board, i, j-1, word, pos+1) or \
+            check(board, i, j+1, word, pos+1)
+            
+        board[i][j] = old
+        return checkConnection
+        
+    for i in xrange(0, len(board)):
+        for j in xrange(0, len(board[i])):
+            if check(board, i, j, word, 0):
+                return True
+                
+    return False
+
+#Remove Duplicates from Sorted Array II 
+#tag: Array, Two Pointers
+def removeDuplicates2(nums):
+    cnt = 2
+    for i in xrange(2, len(nums)):
+        if nums[i] != nums[cnt-2]:
+            nums[cnt] = nums[i]
+            cnt += 1
+    return min(cnt, len(nums))
+
+
+#Remove Duplicates from Sorted List II 
+def deleteDuplicates(head):
+    flag = 0
+    while head and head.next and head.val == head.next.val:
+        head, flag = head.next, 1
+    if flag:
+        head = deleteDuplicates(head.next)
+    elif head:
+        head.next = deleteDuplicates(head.next)
+    return head
+
+def deleteDuplicates2(head):
+    dummy = pt = linked_list.Node(-1)
+    while head:
+        temp = head.next
+        while temp and temp.val == head.val:
+            temp = temp.next
+        if temp == head.next:
+            pt.next = head
+            pt = pt.next
+        head.next = temp
+        head = head.next
+    pt.next = None
+    return dummy.next
+
+#Search in Rotated Sorted Array II 
+#Tag: Array, Binary Search
+def searchInRotatedSortedArray(nums, target):
+    lo, hi = 0, len(nums)-1
+    while lo < hi:
+        mid = lo + (hi - lo)/2
+        if nums[mid] == target:
+            return True
+        if nums[mid] > nums[hi]:
+            if nums[lo] <= target < nums[mid]:
+                hi = mid
+            else:
+                lo = mid + 1
+        elif nums[mid] < nums[hi]:
+            if nums[mid] < target <= nums[hi]:
+                lo = mid + 1
+            else:
+                hi = mid
+        else:
+            hi -= 1
+    return lo < len(nums) and nums[lo] == target
+
+#Partition List
+#Tag: Linked List, Two Pointers
+def partitionList(head, x):
+    lst1 = pt1 = linked_list.Node(-1)
+    lst2 = pt2 = linked_list.Node(-1)
+    while head:
+        if head.val < x:
+            pt1.next = head
+            pt1 = pt1.next
+        else:
+            pt2.next = head
+            pt2 = pt2.next
+        head = head.next
+        
+    pt2.next = None
+    pt1.next = lst2.next
+    return lst1.next

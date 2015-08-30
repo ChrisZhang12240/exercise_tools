@@ -808,30 +808,23 @@ def isPalindromeLinkedList(head):
         temp = None
         while head:
             temp2 = head.next
-            head.next =temp
+            head.next = temp
             temp = head
             head = temp2
-            
         return temp
-        
-    if head == None:
-        return True
-        
-    th1 = th2 = head
+
+    th, th2 = head, head
     while th2 and th2.next and th2.next.next:
         th2 = th2.next.next
-        th1 = th1.next
-        
-    th2 = th1.next
-    th1.next = None
-    th2 = reverse(th2)
-    while th2:
-        if th2.val != head.val:
+        th = th.next
+
+    th2 = reverse(th)
+    th = head
+    while th:
+        if th.val != th2.val:
             return False
-            
+        th = th.next
         th2 = th2.next
-        head = head.next
-        
     return True
 
 #Lowest Common Ancestor of a Binary Search Tree
