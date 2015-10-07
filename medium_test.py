@@ -1,5 +1,6 @@
 import importlib
 import random
+import graphic
 import binary_tree
 import linked_list
 
@@ -965,6 +966,7 @@ def testWordSearch():
 
 def testRemoveDuplicates2():
 	testCase = [
+		#([1,2,1], [1,2,1]),
 		([1,1,1,2,2,3], [1,1,2,2,3]),
 		([], []),
 		([1], [1],),
@@ -996,6 +998,7 @@ def testRemoveDuplicates2():
 	for case in testCase:
 		pos = test_module.removeDuplicates2(case[0])
 		if case[0][:pos] != case[1]:
+			print case[0][:pos], case[1]
 			raise RuntimeError("removeDuplicates2 failed!!")
 
 	print "removeDuplicates2 done!"
@@ -1110,6 +1113,833 @@ def testPartitionList():
 
 	print "testPartitionList done!"
 
+def testGrayCode():
+	testCase = [
+		(0, [0]),
+		(1, [0, 1]),
+		(2, [0, 1, 3, 2]),
+		(3, [0, 1, 3, 2, 6, 7, 5, 4]),
+		(4, [0, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10, 11, 9, 8]),
+		(5, [0, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10, 11, 9, 8, 24, 25, 27, 26, 30, 31, 29, 28, 20, 21, 23, 22, 18, 19, 17, 16]),
+		(6, [0, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10, 11, 9, 8, 24, 25, 27, 26, 30, 31, 29, 28, 20, 21, 23, 22, 18, 19, 17, 16, 48, 49, 51, 50, 54, 55, 53, 52, 60, 61, 63, 62, 58, 59, 57, 56, 40, 41, 43, 42, 46, 47, 45, 44, 36, 37, 39, 38, 34, 35, 33, 32]),
+	]
+	for case in testCase:
+		ret1 = test_module.grayCode(case[0])
+		ret2 = test_module.grayCode2(case[0])
+		if ret1 != ret2 or ret2 != case[1]:
+			raise RuntimeError("testGrayCode failed!! %d" % case[0])
+	print "testGrayCode done!"
+
+def testNumDecodings():
+	testCase = [
+		("10", 1), ("1", 1), ("0", 0), ("", 0),
+		("11", 2), ("26", 2),
+		("25412155680500", 0),("9434447", 1),("86655665", 1),("800018183062457", 0),("568477346631733010014903131", 0),
+		("763476231423468371180060192909", 0),("87190753", 0),("80030", 0),("72", 1),("05949071774", 0),
+		("116217889455317979", 18),("201395350111", 0),("12209305870456718824", 0),("0130", 0),
+		("1117290583", 0),("3168060864273944219190638", 0),("091895397384050220811", 0),("47867488309564", 0),
+		("34388968889595845", 1),("38564998416806642987933295389", 0),("25142519", 16),("415706068780081716965892439072", 0),
+		("26467237671453", 8),("7171599641860", 0),("75847", 1),
+		("4757562545844617494555774581341211511296816786586787755257741178599337186486723247528324612117156948", 589824),
+	]
+
+	for case in testCase:
+		if test_module.numDecodings(case[0]) != case[1]:
+			raise RuntimeError("testNumDecodings failed!! %s" % str(case[0]))
+	print "testNumDecodings done!"
+
+def testSubsetsWithDup():
+	testCase = [
+		([1, 1], [[], [1], [1, 1]]),
+		([4, 4, 4, 1, 4], [[], [1], [1, 4], [1, 4, 4], [1, 4, 4, 4], [1, 4, 4, 4, 4], [4], [4, 4], [4, 4, 4], [4, 4, 4, 4]]),
+		([5, 5, 5, 5, 5], [[], [5], [5, 5], [5, 5, 5], [5, 5, 5, 5], [5, 5, 5, 5, 5]]),
+		([4, 1, 0], [[], [0], [0, 1], [0, 1, 4], [0, 4], [1], [1, 4], [4]]),
+		([1, 2, 2], [[], [1], [1, 2], [1, 2, 2], [2], [2, 2]]),
+		([0], [[], [0]]),
+		([], [[]]),
+		([10, 3, 0], [[], [0], [0, 3], [0, 3, 10], [0, 10], [3], [3, 10], [10]]),
+		([1, 2, 4, 1], [[], [1], [1, 1], [1, 1, 2], [1, 1, 2, 4], [1, 1, 4], [1, 2], [1, 2, 4], [1, 4], [2], [2, 4], [4]]),
+		([3, 10, 4], [[], [3], [3, 4], [3, 4, 10], [3, 10], [4], [4, 10], [10]]),
+		([1, 5, 2], [[], [1], [1, 2], [1, 2, 5], [1, 5], [2], [2, 5], [5]]),
+		([4, 9, 4, 7], [[], [4], [4, 4], [4, 4, 7], [4, 4, 7, 9], [4, 4, 9], [4, 7], [4, 7, 9], [4, 9], [7], [7, 9], [9]]),
+		([9, 10, 5], [[], [5], [5, 9], [5, 9, 10], [5, 10], [9], [9, 10], [10]]),
+		([9, 9, 0, 1], [[], [0], [0, 1], [0, 1, 9], [0, 1, 9, 9], [0, 9], [0, 9, 9], [1], [1, 9], [1, 9, 9], [9], [9, 9]]),
+		([3, 1, 5, 9], [[], [1], [1, 3], [1, 3, 5], [1, 3, 5, 9], [1, 3, 9], [1, 5], [1, 5, 9], [1, 9], [3], [3, 5], [3, 5, 9], [3, 9], [5], [5, 9], [9]]),
+		([3, 6, 9, 1], [[], [1], [1, 3], [1, 3, 6], [1, 3, 6, 9], [1, 3, 9], [1, 6], [1, 6, 9], [1, 9], [3], [3, 6], [3, 6, 9], [3, 9], [6], [6, 9], [9]]),
+		([4, 7, 5, 1], [[], [1], [1, 4], [1, 4, 5], [1, 4, 5, 7], [1, 4, 7], [1, 5], [1, 5, 7], [1, 7], [4], [4, 5], [4, 5, 7], [4, 7], [5], [5, 7], [7]]),
+	]
+
+	for case in testCase:
+		if sorted(test_module.subsetsWithDup(case[0])) != case[1]:
+			raise RuntimeError("testSubsetsWithDup failed!! %s" % str(case[0]))
+
+	print "testSubsetsWithDup done!"
+
+def testReverseBetween():
+	testCase = [
+		([3,5], 1, 2, "5,3"),
+		([5], 1, 1, "5"),
+		([1, 2, 5, 7, 8, 9], 6, 0, "1,2,5,7,8,9"),
+		([2, 3, 4, 6, 7, 9, 10], 3, 4, "2,3,6,4,7,9,10"),
+		([3, 4, 6, 7, 9, 10], 3, 4, "3,4,7,6,9,10"),
+		([1, 2, 3, 4, 5, 8, 9, 10], 4, 5, "1,2,3,5,4,8,9,10"),
+		([1, 2, 4, 8, 9, 10], 6, 0, "1,2,4,8,9,10"),
+		([1, 2, 3, 4, 5, 6, 9, 10], 6, 7, "1,2,3,4,5,9,6,10"),
+		([1, 3, 4, 5, 6, 7, 8], 4, 6, "1,3,4,7,6,5,8"),
+		([9, 10, 4, 2, 7], 2, 5, "9,7,2,4,10"),
+		([3, 4, 5, 6, 7, 8, 9], 5, 7, "3,4,5,6,9,8,7"),
+		([1, 2, 3, 4, 5, 7, 9, 10], 8, 0, "1,2,3,4,5,7,9,10"),
+		([1, 10, 3, 5, 7], 3, 4, "1,10,5,3,7"),
+		([1, 3, 4, 6, 7, 8], 1, 2, "3,1,4,6,7,8"),
+		([8, 9, 2, 10, 5], 3, 5, "8,9,5,10,2"),
+		([1, 2, 3, 4, 5], 5, 0, "1,2,3,4,5"),
+		([1, 2, 4, 5, 6, 9], 2, 4, "1,5,4,2,6,9"),
+		([3, 4, 5, 6, 7, 9], 5, 6, "3,4,5,6,9,7"),
+		([1, 2, 3, 5, 6, 8, 9], 3, 5, "1,2,6,5,3,8,9"),
+		([1, 2, 5, 6, 8, 9, 10], 2, 7, "1,10,9,8,6,5,2"),
+		([2, 3, 5, 6, 8, 9, 10], 2, 5, "2,8,6,5,3,9,10"),
+		([1, 3, 4, 5, 7, 8, 9, 10], 2, 8, "1,10,9,8,7,5,4,3"),
+		([1, 4, 5, 6, 8, 9, 10], 4, 7, "1,4,5,10,9,8,6"),
+		([1, 2, 4, 7, 8, 9], 4, 6, "1,2,4,9,8,7"),
+		([8, 1, 10, 3, 4], 5, 0, "8,1,10,3,4"),
+		([1, 3, 4, 6, 7, 8, 9, 10], 5, 7, "1,3,4,6,9,8,7,10"),
+		([8, 10, 4, 5, 6], 3, 5, "8,10,6,5,4"),
+	]
+
+	for case in testCase:
+		lst = linked_list.createLinkedLst(case[0])
+		if str(test_module.reverseBetween(lst, case[1], case[2])) != case[3]:
+			raise RuntimeError("testReverseBetween failed!! %s %d %d" % (str(case[0]), case[1], case[2]))
+	print "testReverseBetween done!"
+
+def testRestoreIpAddresses():
+	testCase = [
+		("4525", ['4.5.2.5']),("2503104134205", []),("554055545213", []),("0005", ['0.0.0.5']),("0000", ["0.0.0.0"]),
+		("0111411", ['0.1.114.11', '0.11.14.11', '0.11.141.1', '0.111.4.11', '0.111.41.1']),("010010", ["0.10.0.10","0.100.1.0"]),
+		("53432", ['5.3.4.32', '5.3.43.2', '5.34.3.2', '53.4.3.2']),
+		("125131", ['1.2.5.131', '1.2.51.31', '1.25.1.31', '1.25.13.1', '1.251.3.1', '12.5.1.31', '12.5.13.1', '12.51.3.1', '125.1.3.1']),
+		("40513", ['4.0.5.13', '4.0.51.3', '40.5.1.3']),("01234", ['0.1.2.34', '0.1.23.4', '0.12.3.4']),("5155", ['5.1.5.5']),
+		("4324141", ['4.3.24.141', '4.3.241.41', '4.32.4.141', '4.32.41.41', '43.2.4.141', '43.2.41.41', '43.24.1.41', '43.24.14.1', '43.241.4.1']),
+		("03132302423", []),("0300", ['0.3.0.0']),("300342332", []),("13050521140", []),("1000145431100", []),("1103214400042", []),
+		("23152232", ['2.3.152.232', '2.31.52.232', '23.1.52.232', '23.15.2.232', '23.15.22.32', '23.15.223.2', '23.152.2.32', '23.152.23.2', '231.5.2.232', '231.5.22.32', '231.5.223.2', '231.52.2.32', '231.52.23.2']),
+		("120132", ['1.2.0.132', '1.20.1.32', '1.20.13.2', '1.201.3.2', '12.0.1.32', '12.0.13.2', '120.1.3.2']),
+		("45251554", ['45.25.15.54', '45.25.155.4', '45.251.5.54', '45.251.55.4']),
+		("214113552", ['2.141.135.52', '21.41.135.52', '214.1.135.52', '214.11.35.52', '214.113.5.52', '214.113.55.2']),
+		("11323", ['1.1.3.23', '1.1.32.3', '1.13.2.3', '11.3.2.3']),("5014011", ['5.0.140.11', '50.1.40.11', '50.14.0.11', '50.140.1.1']),
+		("21101555", ['2.110.15.55', '2.110.155.5', '21.10.15.55', '21.10.155.5', '21.101.5.55', '21.101.55.5', '211.0.15.55', '211.0.155.5']),	
+		("0343253402", []),("514001302", []),("2155002", ['215.50.0.2']),("21244222315", []),("252015253230", []),	
+		("04031", ['0.4.0.31', '0.40.3.1']),("4514", ['4.5.1.4']),("3120150423", []),("3421352240", ['34.213.52.240']),		
+	]
+	for case in testCase:
+		if sorted(test_module.restoreIpAddresses(case[0])) != case[1]:
+			raise RuntimeError("testRestoreIpAddresses failed!! %s" % case[0])
+	print "testRestoreIpAddresses done!"
+
+def testInorderTraversal():
+	testCase = [
+		("1", [1]),
+		("1,2", [2, 1]),
+		("1,2,3,4", [4, 2, 1, 3]),
+		("1,#,2", [1, 2]),
+		("", []),
+		("1,2,3,4,5,6", [4, 2, 5, 1, 6, 3]),
+		("1,2,3,4", [4, 2, 1, 3]),
+		("1,#,2,3,4", [1, 3, 2, 4]),
+		("1,#,2", [1, 2]),
+		("1", [1]),
+		("1,#,2,#,3,#,4,#,5", [1, 2, 3, 4, 5]),
+		("1,2,3,4,#,#,5,6,7,8,9", [6, 4, 7, 2, 1, 3, 8, 5, 9]),
+	]
+
+	for case in testCase:
+		ret1 = test_module.inorderTraversal(binary_tree.createTreeFromStr(case[0]))
+		ret2 = test_module.inorderTraversal2(binary_tree.createTreeFromStr(case[0]))
+		if ret1 != ret2 or ret1 != case[1]:
+			raise RuntimeError("testInorderTraversal failed!! %s" % case[0])
+	print "testInorderTraversal done!"
+
+def testNumTrees():
+	testCase = [
+	(1, 1),(2, 2),(3, 5),(4, 14),(5, 42),
+	(6, 132),(7, 429),(8, 1430),(9, 4862),(10, 16796),
+	(11, 58786),(12, 208012),(13, 742900),(14, 2674440),(15, 9694845),
+	]
+	for case in testCase:
+		if test_module.numTrees(case[0]) != case[1]:
+			raise RuntimeError("testNumTrees failed!! %d" % case[0])
+
+	print "testNumTrees done!"
+
+def testGenerateTrees():
+	def treeToStr(tree):
+		if tree == None:
+			return ""
+		queue = [tree]
+		ret = []
+		while queue:
+			node, queue = queue[0], queue[1:]
+			if node:
+				ret.append(str(node.val))
+				queue.append(node.left)
+				queue.append(node.right)
+			else:
+				ret.append('#')
+		pos = len(ret)-1
+		while pos > 0 and ret[pos] == '#':
+			pos -= 1
+		return ",".join(ret[:pos+1])
+
+
+
+	testCase = [
+		(0, ['']),
+		(1, ['1']),
+		(2, ['1,#,2', '2,1']),
+		(3, ['1,#,2,#,3', '1,#,3,2', '2,1,3', '3,1,#,#,2', '3,2,#,1']),
+		(4, ['1,#,2,#,3,#,4', '1,#,2,#,4,3', '1,#,3,2,4', '1,#,4,2,#,#,3', '1,#,4,3,#,2', '2,1,3,#,#,#,4', '2,1,4,#,#,3', '3,1,4,#,2', '3,2,4,1', '4,1,#,#,2,#,3', '4,1,#,#,3,2', '4,2,#,1,3', '4,3,#,1,#,#,2', '4,3,#,2,#,1']),
+	]
+	for case in testCase:
+		ret = test_module.generateTrees(case[0])
+		collection = []
+		for item in ret:
+			collection.append(treeToStr(item))
+		if sorted(collection) != case[1]:
+			raise RuntimeError("testGenerateTrees failed!! %d" % case[0])
+
+	print "testGenerateTrees done!"
+
+def testIsValidBST():
+	testCase = [
+		("", True),
+		("1", True),
+		("1,3", False),
+		("1,#,2", True),
+		("1,2,3,4,5", False),
+		("8,3,6,1,4,5,7", False),
+		("8,3,6,1,7,5,4", False),
+		("6,3,8,1,4,7,9", True),
+		("6,3,8,1,4,7", True),
+	]
+
+	for case in testCase:
+		tree = binary_tree.createTreeFromStr(case[0])
+		if test_module.isValidBST(tree) != case[1]:
+			raise RuntimeError("testIsValidBST failed!! %s" % case[0])
+
+	print "testIsValidBST done!"
+
+def testZigzagLevelOrder():
+	testCase = [
+		("", []),
+		("1", [[1]]),
+		("1,3", [[1], [3]]),
+		("1,#,2", [[1], [2]]),
+		("1,2,3,4,5", [[1], [3, 2], [4, 5]]),
+		("8,3,6,1,4,5,7", [[8], [6, 3], [1, 4, 5, 7]]),
+		("8,3,6,1,7,5,4", [[8], [6, 3], [1, 7, 5, 4]]),
+		("6,3,8,1,4,7,9", [[6], [8, 3], [1, 4, 7, 9]]),
+		("6,3,8,1,4,7", [[6], [8, 3], [1, 4, 7]]),
+		("1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,8,19,20,21,22", [[1], [3, 2], [4, 5, 6, 7], [15, 14, 13, 12, 11, 10, 9, 8], [16, 17, 8, 19, 20, 21, 22]]),
+	]
+
+	for case in testCase:
+		tree = binary_tree.createTreeFromStr(case[0])
+		if test_module.zigzagLevelOrder(tree) != case[1]:
+			raise RuntimeError("testZigzagLevelOrder failed!! %s" % case[0])
+
+	print "testZigzagLevelOrder done!"
+
+def testBuildTreeFromPreIn():
+	testCase = [
+		([1, 2, 3, 6, 4, 5], [3, 2, 1, 4, 6, 5], "1,2,6,3,#,4,5"),
+		([1, 3, 2, 6, 5, 4], [6, 2, 3, 5, 1, 4], "1,3,4,2,5,#,#,6"),
+		([3, 2, 7, 6, 5, 1, 4], [6, 7, 5, 2, 4, 1, 3], "3,2,#,7,1,6,5,4"),
+		([6, 2, 4, 7, 1, 3, 5], [4, 2, 1, 7, 6, 5, 3], "6,2,3,4,7,5,#,#,#,1"),
+		([4, 5, 3, 2, 1], [3, 2, 5, 4, 1], "4,5,1,3,#,#,#,#,2"),
+		([5, 2, 1, 4, 6, 3], [2, 4, 1, 5, 3, 6], "5,2,6,#,1,3,#,4"),
+		([4, 3, 2, 7, 1, 6, 5], [3, 4, 1, 6, 7, 2, 5], "4,3,2,#,#,7,5,1,#,#,#,#,6"),
+		([1, 6, 4, 2, 3, 5], [4, 6, 5, 3, 2, 1], "1,6,#,4,2,#,#,3,#,5"),
+		([2, 1, 7, 3, 5, 6, 4], [1, 2, 3, 7, 5, 6, 4], "2,1,7,#,#,3,5,#,#,#,6,#,4"),
+		([7, 3, 4, 2, 5, 6, 1], [7, 4, 3, 6, 5, 2, 1], "7,#,3,4,2,#,#,5,1,6"),
+		([3, 1, 2, 4, 6, 5, 7], [1, 3, 2, 6, 4, 5, 7], "3,1,2,#,#,#,4,6,5,#,#,#,7"),
+		([4, 2, 1, 3, 5], [4, 2, 5, 3, 1], "4,#,2,#,1,3,#,5"),
+		([5, 3, 4, 2, 1], [3, 2, 4, 5, 1], "5,3,1,#,4,#,#,2"),
+		([5, 2, 4, 3, 1, 6], [2, 5, 3, 1, 4, 6], "5,2,4,#,#,3,6,#,1"),
+		([5, 6, 3, 2, 1, 7, 4], [6, 5, 2, 1, 7, 3, 4], "5,6,3,#,#,2,4,#,1,#,#,#,7"),
+		([1, 2, 5, 4, 3], [5, 2, 4, 1, 3], "1,2,3,5,4"),
+		([5, 2, 3, 1, 4], [2, 3, 5, 4, 1], "5,2,1,#,3,4"),
+		([1, 3, 6, 4, 5, 2], [4, 6, 5, 3, 2, 1], "1,3,#,6,2,4,5"),
+		([1, 3, 2, 4, 5], [3, 1, 5, 4, 2], "1,3,2,#,#,4,#,5"),
+		([1, 3, 2, 4, 5], [3, 2, 1, 5, 4], "1,3,4,#,2,5"),
+		([5, 2, 3, 1, 4], [5, 4, 1, 3, 2], "5,#,2,3,#,1,#,4"),
+		([3, 5, 4, 1, 2], [1, 4, 5, 3, 2], "3,5,2,4,#,#,#,1"),
+		([7, 3, 5, 6, 2, 1, 4], [3, 6, 2, 5, 7, 4, 1], "7,3,1,#,5,4,#,6,#,#,#,#,2"),
+		([1, 6, 5, 4, 2, 3], [6, 2, 4, 5, 1, 3], "1,6,3,#,5,#,#,4,#,2"),
+		([5, 4, 3, 1, 2], [1, 3, 4, 5, 2], "5,4,2,3,#,#,#,1"),
+	]
+
+	for case in testCase:
+		s1 = str(case[0])
+		s2 = str(case[1])
+		tree = test_module.buildTreeFromPreIn(case[0], case[1])
+		if binary_tree.serialize(tree) != case[2]:
+			raise RuntimeError("testBuildTreeFromPreIn failed!! %s %s" % (s1, s2))
+
+	print "testBuildTreeFromPreIn done!"
+
+def testBuildTreeFromPostIn():
+	testCase = [
+		([3, 4, 2, 5, 6, 1], [3, 2, 4, 1, 5, 6], "1,2,6,3,4,5"),
+		([2, 5, 3, 6, 4, 1], [2, 3, 5, 1, 4, 6], "1,3,4,2,5,#,6"),
+		([1, 6, 2, 5, 4, 7, 3], [1, 2, 6, 3, 5, 7, 4], "3,2,7,1,6,5,4"),
+		([1, 4, 7, 2, 5, 3, 6], [1, 4, 2, 7, 6, 5, 3], "6,2,3,4,7,5,#,1"),
+		([3, 5, 2, 1, 4], [3, 5, 4, 1, 2], "4,5,1,3,#,#,2"),
+		([1, 2, 3, 4, 6, 5], [2, 1, 5, 3, 6, 4], "5,2,6,#,1,3,4"),
+		([7, 3, 6, 5, 1, 2, 4], [3, 7, 4, 6, 5, 2, 1], "4,3,2,#,7,5,1,#,#,6"),
+		([2, 6, 3, 5, 4, 1], [2, 6, 1, 3, 4, 5], "1,6,4,2,#,3,5"),
+		([6, 3, 1, 4, 5, 7, 2], [1, 3, 6, 2, 5, 4, 7], "2,1,7,#,3,5,#,#,6,#,4"),
+		([5, 4, 1, 6, 2, 3, 7], [7, 4, 5, 3, 1, 2, 6], "7,#,3,4,2,#,5,1,6"),
+		([1, 5, 4, 7, 6, 2, 3], [1, 3, 5, 4, 2, 6, 7], "3,1,2,#,#,4,6,5,#,#,7"),
+		([3, 5, 1, 2, 4], [4, 2, 3, 1, 5], "4,#,2,#,1,3,5"),
+		([4, 3, 2, 1, 5], [3, 4, 5, 1, 2], "5,3,1,#,4,#,2"),
+		([1, 3, 2, 6, 4, 5], [2, 1, 3, 5, 6, 4], "5,2,4,#,3,6,#,1"),
+		([1, 2, 6, 7, 4, 3, 5], [6, 1, 2, 5, 4, 7, 3], "5,6,3,#,2,4,#,1,#,#,7"),
+		([5, 4, 2, 3, 1], [5, 2, 4, 1, 3], "1,2,3,5,4"),
+		([3, 2, 4, 1, 5], [2, 3, 5, 4, 1], "5,2,1,#,3,4"),
+		([2, 4, 3, 5, 6, 1], [2, 3, 4, 1, 5, 6], "1,3,6,2,4,5"),
+		([4, 3, 5, 2, 1], [3, 4, 1, 5, 2], "1,3,2,#,4,5"),
+		([2, 3, 5, 4, 1], [3, 2, 1, 5, 4], "1,3,4,#,2,5"),
+		([4, 3, 1, 2, 5], [5, 4, 3, 2, 1], "5,#,2,3,1,4"),
+		([4, 5, 1, 2, 3], [4, 5, 3, 1, 2], "3,5,2,4,#,1"),
+		([5, 3, 2, 4, 6, 1, 7], [3, 5, 7, 2, 4, 1, 6], "7,3,1,#,5,4,6,#,#,2"),
+		([2, 5, 6, 4, 3, 1], [6, 2, 5, 1, 3, 4], "1,6,3,#,5,#,4,2"),
+		([3, 4, 1, 2, 5], [3, 4, 5, 1, 2], "5,4,2,3,#,1"),
+	]
+
+
+	for case in testCase:
+		s1 = str(case[0])
+		s2 = str(case[1])
+		tree = test_module.buildTreeFromPostIn(case[0], case[1])
+		if binary_tree.serialize(tree) != case[2]:
+			print binary_tree.serialize(tree), "hehe"
+			raise RuntimeError("testBuildTreeFromPostIn failed!! %s %s" % (s1, s2))
+
+	print "testBuildTreeFromPostIn done!"
+
+def testSortedArrayToBST():
+	testCase = [
+		([], ""),
+		([1], "1"),
+		([1, 2], "1,#,2"),
+		([1, 2, 3], "2,1,3"),
+		([1, 2, 3, 4], "2,1,3,#,#,#,4"),
+		([1, 2, 3, 4, 5], "3,1,4,#,2,#,5"),
+		([1, 2, 3, 4, 5, 6], "3,1,5,#,2,4,6"),
+		([1, 2, 3, 4, 5, 6, 7, 8], "4,2,6,1,3,5,7,#,#,#,#,#,#,#,8"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9], "5,2,7,1,3,6,8,#,#,#,4,#,#,#,9"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "5,2,8,1,3,6,9,#,#,#,4,#,7,#,10"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "6,3,9,1,4,7,10,#,2,#,5,#,8,#,11"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "6,3,9,1,4,7,11,#,2,#,5,#,8,10,12"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], "7,3,10,1,5,8,12,#,2,4,6,#,9,11,13"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "7,3,11,1,5,9,13,#,2,4,6,8,10,12,14"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "8,4,12,2,6,10,14,1,3,5,7,9,11,13,15"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "8,4,12,2,6,10,14,1,3,5,7,9,11,13,15,#,#,#,#,#,#,#,#,#,#,#,#,#,#,#,16"),
+	]
+
+	for case in testCase:
+		tree = test_module.sortedArrayToBST(case[0])
+		if binary_tree.serialize(tree) != case[1]:
+			raise RuntimeError("testSortedArrayToBST failed!! %s" % case[0])
+	print "testSortedArrayToBST done!"
+
+def testSortedListToBST():
+	testCase = [
+		([], ""),
+		([1], "1"),
+		([1, 2], "1,#,2"),
+		([1, 2, 3], "2,1,3"),
+		([1, 2, 3, 4], "2,1,3,#,#,#,4"),
+		([1, 2, 3, 4, 5], "3,1,4,#,2,#,5"),
+		([1, 2, 3, 4, 5, 6], "3,1,5,#,2,4,6"),
+		([1, 2, 3, 4, 5, 6, 7, 8], "4,2,6,1,3,5,7,#,#,#,#,#,#,#,8"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9], "5,2,7,1,3,6,8,#,#,#,4,#,#,#,9"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "5,2,8,1,3,6,9,#,#,#,4,#,7,#,10"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "6,3,9,1,4,7,10,#,2,#,5,#,8,#,11"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "6,3,9,1,4,7,11,#,2,#,5,#,8,10,12"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13], "7,3,10,1,5,8,12,#,2,4,6,#,9,11,13"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "7,3,11,1,5,9,13,#,2,4,6,8,10,12,14"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], "8,4,12,2,6,10,14,1,3,5,7,9,11,13,15"),
+		([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "8,4,12,2,6,10,14,1,3,5,7,9,11,13,15,#,#,#,#,#,#,#,#,#,#,#,#,#,#,#,16"),
+	]
+
+	for case in testCase:
+		lst = linked_list.createLinkedLst(case[0])
+		tree = test_module.sortedListToBST(lst)
+		if binary_tree.serialize(tree) != case[1]:
+			raise RuntimeError("testSortedListToBST failed! %s" % case[0])
+
+	print "testSortedListToBST done!"
+
+def testFlatten():
+	testCase = [
+		("1", "1"), ("", ""),
+		("1,2,6,3,4,5", "1,#,2,#,3,#,4,#,6,#,5"),
+		("1,3,4,2,5,#,6", "1,#,3,#,2,#,5,#,4,#,6"),
+		("3,2,7,1,6,5,4", "3,#,2,#,1,#,6,#,7,#,5,#,4"),
+		("6,2,3,4,7,5,#,1", "6,#,2,#,4,#,1,#,7,#,3,#,5"),
+		("4,5,1,3,#,#,2", "4,#,5,#,3,#,1,#,2"),
+		("5,2,6,#,1,3,4", "5,#,2,#,1,#,6,#,3,#,4"),
+		("4,3,2,#,7,5,1,#,#,6", "4,#,3,#,7,#,2,#,5,#,6,#,1"),
+		("1,6,4,2,#,3,5", "1,#,6,#,2,#,4,#,3,#,5"),
+		("2,1,7,#,3,5,#,#,6,#,4", "2,#,1,#,3,#,6,#,7,#,5,#,4"),
+		("7,#,3,4,2,#,5,1,6", "7,#,3,#,4,#,5,#,2,#,1,#,6"),
+		("3,1,2,#,#,4,6,5,#,#,7", "3,#,1,#,2,#,4,#,5,#,6,#,7"),
+		("4,#,2,#,1,3,5", "4,#,2,#,1,#,3,#,5"),
+		("5,3,1,#,4,#,2", "5,#,3,#,4,#,1,#,2"),
+		("5,2,4,#,3,6,#,1", "5,#,2,#,3,#,1,#,4,#,6"),
+		("5,6,3,#,2,4,#,1,#,#,7", "5,#,6,#,2,#,1,#,3,#,4,#,7"),
+		("1,2,3,5,4", "1,#,2,#,5,#,4,#,3"),
+		("5,2,1,#,3,4", "5,#,2,#,3,#,1,#,4"),
+		("1,3,6,2,4,5", "1,#,3,#,2,#,4,#,6,#,5"),
+		("1,3,2,#,4,5", "1,#,3,#,4,#,2,#,5"),
+		("1,3,4,#,2,5", "1,#,3,#,2,#,4,#,5"),
+		("5,#,2,3,1,4", "5,#,2,#,3,#,4,#,1"),
+		("3,5,2,4,#,1", "3,#,5,#,4,#,2,#,1"),
+		("7,3,1,#,5,4,6,#,#,2", "7,#,3,#,5,#,1,#,4,#,2,#,6"),
+		("1,6,3,#,5,#,4,2", "1,#,6,#,5,#,2,#,3,#,4"),
+		("5,4,2,3,#,1", "5,#,4,#,3,#,2,#,1"),
+	]
+
+	for case in testCase:
+		tree1 = binary_tree.createTreeFromStr( case[0] )
+		tree2 = binary_tree.createTreeFromStr( case[0] )
+		test_module.flatten(tree1)
+		test_module.flatten2(tree2)
+		ret1, ret2 = binary_tree.serialize(tree1), binary_tree.serialize(tree2)
+		if ret1 != ret2 or ret1 != case[1]:
+			raise RuntimeError("testFlatten failed!! %s" % case[0])
+			
+	print "testFlatten done!"
+
+def testPathSum():
+	testCase = [
+		("", 0, []),
+		("1", 0, []),
+		("1", 1, [[1]]),
+		("1,2,6,3,4,5", 0, []),
+		("1,2,6,3,4,5", 6, [[1, 2, 3]]),
+		("1,2,6,3,4,5", 12, [[1, 6, 5]]),
+		("1,3,4,2,5,#,6", 0, []),
+		("1,3,4,2,5,#,6", 6, [[1, 3, 2]]),
+		("3,2,7,1,6,5,4", 6, [[3, 2, 1]]),
+		("6,2,3,4,7,5,#,1", 7, []),
+		("6,2,3,4,7,5,#,1", 13, [[6, 2, 4, 1]]),
+		("6,2,3,4,7,5,#,1", 15, [[6, 2, 7]]),
+		("4,5,1,3,#,#,2", 7, [[4, 1, 2]]),
+		("5,2,6,#,1,3,4", 15, [[5, 6, 4]]),
+		("4,3,2,#,7,5,1,#,#,6", 17, [[4, 2, 5, 6]]),
+		("1,6,4,2,#,3,5", 8, [[1, 4, 3]]),
+		("2,1,7,#,3,5,#,#,6,#,4", 18, [[2, 7, 5, 4]]),
+		("7,#,3,4,2,#,5,1,6", 19, [[7, 3, 4, 5]]),
+		("3,1,2,#,#,4,6,5,#,#,7", 14, [[3, 2, 4, 5]]),
+		("3,1,2,#,#,4,6,5,#,#,7", 18, [[3, 2, 6, 7]]),
+		("4,#,2,#,1,3,5", 12, [[4, 2, 1, 5]]),
+		("5,2,4,#,3,6,#,1", 0, []),
+		("5,2,1,#,3,4", 0, []),
+		("5,2,1,#,3,4", 10, [[5, 2, 3], [5, 1, 4]]),
+		("1,3,6,2,4,5", 12, [[1, 6, 5]]),
+		("1,3,2,#,4,5", 0, []),
+		("1,3,2,#,4,5", 8, [[1, 3, 4], [1, 2, 5]]),
+		("1,3,4,#,2,5", 0, []),
+		("1,3,4,#,2,5", 6, [[1, 3, 2]]),
+		("3,5,2,4,#,1", 12, [[3, 5, 4]]),
+		("7,3,1,#,5,4,6,#,#,2", 0, []),
+		("7,3,1,#,5,4,6,#,#,2", 14, [[7, 1, 4, 2], [7, 1, 6]]),
+		("1,6,3,#,5,#,4,2", 8, [[1, 3, 4]]),
+		("1,6,3,#,5,#,4,2", 14, [[1, 6, 5, 2]]),
+		("5,4,2,3,#,1", 12, [[5, 4, 3]]),
+	]
+
+	for case in testCase:
+		tree = binary_tree.createTreeFromStr(case[0])
+		if test_module.pathSum(tree, case[1]) != case[2]:
+			raise RuntimeError("testPathSum failed!!")
+
+	print "testPathSum done!"
+
+def testConnectTree():
+	testCase = [
+		"","1","1","1,2,6,3,4,5","1,2,6,3,4,5","1,2,6,3,4,5",
+		"1,3,4,2,5,#,6","1,3,4,2,5,#,6","3,2,7,1,6,5,4","6,2,3,4,7,5,#,1","6,2,3,4,7,5,#,1","6,2,3,4,7,5,#,1",
+		"4,5,1,3,#,#,2","5,2,6,#,1,3,4","4,3,2,#,7,5,1,#,#,6","1,6,4,2,#,3,5","2,1,7,#,3,5,#,#,6,#,4",
+		"7,#,3,4,2,#,5,1,6","3,1,2,#,#,4,6,5,#,#,7","3,1,2,#,#,4,6,5,#,#,7","4,#,2,#,1,3,5","5,2,4,#,3,6,#,1",
+		"5,2,1,#,3,4","5,2,1,#,3,4","1,3,6,2,4,5","1,3,2,#,4,5","1,3,2,#,4,5","1,3,4,#,2,5","1,3,4,#,2,5",
+		"3,5,2,4,#,1","7,3,1,#,5,4,6,#,#,2","7,3,1,#,5,4,6,#,#,2","1,6,3,#,5,#,4,2","1,6,3,#,5,#,4,2","5,4,2,3,#,1",
+	]
+
+	def checkLinkedTree(root):
+		if not root:
+			return True
+		queue = [root]
+		while queue:
+			size = len(queue)
+			row = [None] * size
+			for i in xrange(size):
+				node = queue.pop(0)
+				if node.left:
+					queue.append(node.left)
+				if node.right:
+					queue.append(node.right)
+				row[i] = node
+
+			while row:
+				node = row.pop(0)
+				if len(row) and node.next != row[0]:
+					return False
+		return True
+
+	for case in testCase:
+		tree = binary_tree.createTreeFromStr(case)
+		tree = binary_tree.treeToLinkedTree(tree)
+		if test_module.connectTree(tree) and not checkLinkedTree(tree):
+			raise RuntimeError("testConnectTree failed!!")
+
+	print "testConnectTree done!"
+
+
+def testMinimumTotal():
+	testCase = [
+		([[2],[3,4],[6,5,7],[4,1,8,3]], 11),
+		([], 0),
+		([[-10]], -10),
+	]
+
+	for case in testCase:
+		if test_module.minimumTotal(case[0]) != case[1]:
+			raise RuntimeError("testMinimumTotal failed!! %s" % case[0])
+
+	print "testMinimumTotal done!"
+
+def testMaxProfit():
+	testCase = [
+		([], 0),([1], 0),([2,1,2,0,1], 1),([1,2,3,4,5], 4),
+		([1,2,-3,4,5], 8),([36, -33, 90, 92, 20], 125),([-19, -51, -44, 28, -100, -73, 0, 9], 109),
+		([-31, -7, 56, -86, 67], 153),([-17, 52, 11, -61, -23, -39], 69),	([50, 19, -55, 60, -40, 32, 25], 115),
+		([-99, 86, -37, 3, -7], 185),([-11, -100, 49, -74, -13, -73, 66, -34], 166),
+		([3, 26, 23, 92, 99, -98, -37], 96),([95, 8, -64, 1, -63, -87], 65),([82, -82, 39, -61, 98, -96, -4, 97], 193),
+		([-87, -54, 62, 92, -60], 179),	([26, 93, -85, -54, -72, 36], 121),	([77, 81, -30, -64, -4, -86, -13, 83], 169),
+		([-48, 38, -90, -12, -15, 83], 173),([-14, -13, 66, -99, 80, -87, -74, 51, 71], 179),([6, -68, -78, -71, 8, 64], 142),
+		([-73, 8, -24, -58, -76, -23, 30, -84, -76, 27], 111),([-61, -36, 66, -2, -5, 9, 69, -27, 96], 157),([55, -31, 39, 61, -37], 92),
+		([-63, 44, 92, 16, 53, -66], 155),([27, -48, 81, 100, 6, 21], 148),	([89, 90, 71, -42, -29, 23], 65),
+		([-57, 25, 50, -22, -39, -31, 46], 107),([-24, 91, -39, -93, -78, -3, 34, -30], 127),([87, -46, -51, 61, 65, 90, 90, 72], 141),
+	]
+
+	for case in testCase:
+		if test_module.maxProfit(case[0]) != case[1]:
+			raise RuntimeError("testMaxProfit failed!! %s" % case[0])
+
+	print "testMaxProfit done!"
+
+def testMaxProfit2():
+	testCase = [
+		([], 0),([1], 0),([2, 1, 2, 0, 1], 2),
+		([1, 2, 3, 4, 5], 4),([1, 2, -3, 4, 5], 9),([36, -33, 90, 92, 20], 125),
+		([-19, -51, -44, 28, -100, -73, 0, 9], 188),([-31, -7, 56, -86, 67], 240),([-17, 52, 11, -61, -23, -39], 107),
+		([50, 19, -55, 60, -40, 32, 25], 187),([-99, 86, -37, 3, -7], 225),([-11, -100, 49, -74, -13, -73, 66, -34], 349),
+		([3, 26, 23, 92, 99, -98, -37], 160),([95, 8, -64, 1, -63, -87], 65),([82, -82, 39, -61, 98, -96, -4, 97], 473),
+		([-87, -54, 62, 92, -60], 179),([26, 93, -85, -54, -72, 36], 206),([77, 81, -30, -64, -4, -86, -13, 83], 233),
+		([-48, 38, -90, -12, -15, 83], 262),([-14, -13, 66, -99, 80, -87, -74, 51, 71], 417),([6, -68, -78, -71, 8, 64], 142),
+		([-73, 8, -24, -58, -76, -23, 30, -84, -76, 27], 298),([-61, -36, 66, -2, -5, 9, 69, -27, 96], 324),([55, -31, 39, 61, -37], 92),
+		([-63, 44, 92, 16, 53, -66], 192),([27, -48, 81, 100, 6, 21], 163),([89, 90, 71, -42, -29, 23], 66),
+		([-57, 25, 50, -22, -39, -31, 46], 192),([-24, 91, -39, -93, -78, -3, 34, -30], 242),([87, -46, -51, 61, 65, 90, 90, 72], 141),
+	]
+
+	for case in testCase:
+		if test_module.maxProfit2(case[0]) != case[1]:
+			raise RuntimeError("testMaxProfit2 failed!! %s" % case[0])
+
+	print "testMaxProfit2 done!"
+
+def testSumNumbers():
+	testCase = [
+		("1", 1),("", 0),
+		("1,2,6,3,4,5", 412),("1,3,4,2,5,#,6", 413),("3,2,7,1,6,5,4", 1396),("6,2,3,4,7,5,#,1", 7503),("4,5,1,3,#,#,2", 865),
+		("5,2,6,#,1,3,4", 1648),("4,3,2,#,7,5,1,#,#,6", 5114),("1,6,4,2,#,3,5", 450),("2,1,7,#,3,5,#,#,6,#,4", 4890),("7,#,3,4,2,#,5,1,6", 21992),
+		("3,1,2,#,#,4,6,5,#,#,7", 6543),("4,#,2,#,1,3,5", 8428),("5,3,1,#,4,#,2", 1046),("5,2,4,#,3,6,#,1", 5777),("5,6,3,#,2,4,#,1,#,#,7", 10968),
+		("1,2,3,5,4", 262),("5,2,1,#,3,4", 1037),("1,3,6,2,4,5", 431),("1,3,2,#,4,5", 259),("1,3,4,#,2,5", 277),
+		("5,#,2,3,1,4", 5755),("3,5,2,4,#,1", 675),("7,3,1,#,5,4,6,#,#,2", 8593),("1,6,3,#,5,#,4,2", 1786),("5,4,2,3,#,1", 1064),
+	]
+
+	for case in testCase:
+		tree = binary_tree.createTreeFromStr(case[0])
+		if test_module.sumNumbers(tree) != case[1]:
+			raise RuntimeError("testSumNumbers failed!!")
+	print "testSumNumbers done!"
+
+def testWordLadder():
+	testCase = [
+		("hot","dog",["hot","dog"], 0),
+		("sand", "acne", ["slit","bunk","wars","ping","viva","wynn","wows","irks","gang","pool","mock","fort","heel","send","ship","cols","alec","foal","nabs","gaze","giza","mays","dogs","karo","cums","jedi","webb","lend","mire","jose","catt","grow","toss","magi","leis","bead","kara","hoof","than","ires","baas","vein","kari","riga","oars","gags","thug","yawn","wive","view","germ","flab","july","tuck","rory","bean","feed","rhee","jeez","gobs","lath","desk","yoko","cute","zeus","thus","dims","link","dirt","mara","disc","limy","lewd","maud","duly","elsa","hart","rays","rues","camp","lack","okra","tome","math","plug","monk","orly","friz","hogs","yoda","poop","tick","plod","cloy","pees","imps","lead","pope","mall","frey","been","plea","poll","male","teak","soho","glob","bell","mary","hail","scan","yips","like","mull","kory","odor","byte","kaye","word","honk","asks","slid","hopi","toke","gore","flew","tins","mown","oise","hall","vega","sing","fool","boat","bobs","lain","soft","hard","rots","sees","apex","chan","told","woos","unit","scow","gilt","beef","jars","tyre","imus","neon","soap","dabs","rein","ovid","hose","husk","loll","asia","cope","tail","hazy","clad","lash","sags","moll","eddy","fuel","lift","flog","land","sigh","saks","sail","hook","visa","tier","maws","roeg","gila","eyes","noah","hypo","tore","eggs","rove","chap","room","wait","lurk","race","host","dada","lola","gabs","sobs","joel","keck","axed","mead","gust","laid","ends","oort","nose","peer","kept","abet","iran","mick","dead","hags","tens","gown","sick","odis","miro","bill","fawn","sumo","kilt","huge","ores","oran","flag","tost","seth","sift","poet","reds","pips","cape","togo","wale","limn","toll","ploy","inns","snag","hoes","jerk","flux","fido","zane","arab","gamy","raze","lank","hurt","rail","hind","hoot","dogy","away","pest","hoed","pose","lose","pole","alva","dino","kind","clan","dips","soup","veto","edna","damp","gush","amen","wits","pubs","fuzz","cash","pine","trod","gunk","nude","lost","rite","cory","walt","mica","cart","avow","wind","book","leon","life","bang","draw","leek","skis","dram","ripe","mine","urea","tiff","over","gale","weir","defy","norm","tull","whiz","gill","ward","crag","when","mill","firs","sans","flue","reid","ekes","jain","mutt","hems","laps","piss","pall","rowe","prey","cull","knew","size","wets","hurl","wont","suva","girt","prys","prow","warn","naps","gong","thru","livy","boar","sade","amok","vice","slat","emir","jade","karl","loyd","cerf","bess","loss","rums","lats","bode","subs","muss","maim","kits","thin","york","punt","gays","alpo","aids","drag","eras","mats","pyre","clot","step","oath","lout","wary","carp","hums","tang","pout","whip","fled","omar","such","kano","jake","stan","loop","fuss","mini","byrd","exit","fizz","lire","emil","prop","noes","awed","gift","soli","sale","gage","orin","slur","limp","saar","arks","mast","gnat","port","into","geed","pave","awls","cent","cunt","full","dint","hank","mate","coin","tars","scud","veer","coax","bops","uris","loom","shod","crib","lids","drys","fish","edit","dick","erna","else","hahs","alga","moho","wire","fora","tums","ruth","bets","duns","mold","mush","swop","ruby","bolt","nave","kite","ahem","brad","tern","nips","whew","bait","ooze","gino","yuck","drum","shoe","lobe","dusk","cult","paws","anew","dado","nook","half","lams","rich","cato","java","kemp","vain","fees","sham","auks","gish","fire","elam","salt","sour","loth","whit","yogi","shes","scam","yous","lucy","inez","geld","whig","thee","kelp","loaf","harm","tomb","ever","airs","page","laud","stun","paid","goop","cobs","judy","grab","doha","crew","item","fogs","tong","blip","vest","bran","wend","bawl","feel","jets","mixt","tell","dire","devi","milo","deng","yews","weak","mark","doug","fare","rigs","poke","hies","sian","suez","quip","kens","lass","zips","elva","brat","cosy","teri","hull","spun","russ","pupa","weed","pulp","main","grim","hone","cord","barf","olav","gaps","rote","wilt","lars","roll","balm","jana","give","eire","faun","suck","kegs","nita","weer","tush","spry","loge","nays","heir","dope","roar","peep","nags","ates","bane","seas","sign","fred","they","lien","kiev","fops","said","lawn","lind","miff","mass","trig","sins","furl","ruin","sent","cray","maya","clog","puns","silk","axis","grog","jots","dyer","mope","rand","vend","keen","chou","dose","rain","eats","sped","maui","evan","time","todd","skit","lief","sops","outs","moot","faze","biro","gook","fill","oval","skew","veil","born","slob","hyde","twin","eloy","beat","ergs","sure","kobe","eggo","hens","jive","flax","mons","dunk","yest","begs","dial","lodz","burp","pile","much","dock","rene","sago","racy","have","yalu","glow","move","peps","hods","kins","salk","hand","cons","dare","myra","sega","type","mari","pelt","hula","gulf","jugs","flay","fest","spat","toms","zeno","taps","deny","swag","afro","baud","jabs","smut","egos","lara","toes","song","fray","luis","brut","olen","mere","ruff","slum","glad","buds","silt","rued","gelt","hive","teem","ides","sink","ands","wisp","omen","lyre","yuks","curb","loam","darn","liar","pugs","pane","carl","sang","scar","zeds","claw","berg","hits","mile","lite","khan","erik","slug","loon","dena","ruse","talk","tusk","gaol","tads","beds","sock","howe","gave","snob","ahab","part","meir","jell","stir","tels","spit","hash","omit","jinx","lyra","puck","laue","beep","eros","owed","cede","brew","slue","mitt","jest","lynx","wads","gena","dank","volt","gray","pony","veld","bask","fens","argo","work","taxi","afar","boon","lube","pass","lazy","mist","blot","mach","poky","rams","sits","rend","dome","pray","duck","hers","lure","keep","gory","chat","runt","jams","lays","posy","bats","hoff","rock","keri","raul","yves","lama","ramp","vote","jody","pock","gist","sass","iago","coos","rank","lowe","vows","koch","taco","jinn","juno","rape","band","aces","goal","huck","lila","tuft","swan","blab","leda","gems","hide","tack","porn","scum","frat","plum","duds","shad","arms","pare","chin","gain","knee","foot","line","dove","vera","jays","fund","reno","skid","boys","corn","gwyn","sash","weld","ruiz","dior","jess","leaf","pars","cote","zing","scat","nice","dart","only","owls","hike","trey","whys","ding","klan","ross","barb","ants","lean","dopy","hock","tour","grip","aldo","whim","prom","rear","dins","duff","dell","loch","lava","sung","yank","thar","curl","venn","blow","pomp","heat","trap","dali","nets","seen","gash","twig","dads","emmy","rhea","navy","haws","mite","bows","alas","ives","play","soon","doll","chum","ajar","foam","call","puke","kris","wily","came","ales","reef","raid","diet","prod","prut","loot","soar","coed","celt","seam","dray","lump","jags","nods","sole","kink","peso","howl","cost","tsar","uric","sore","woes","sewn","sake","cask","caps","burl","tame","bulk","neva","from","meet","webs","spar","fuck","buoy","wept","west","dual","pica","sold","seed","gads","riff","neck","deed","rudy","drop","vale","flit","romp","peak","jape","jews","fain","dens","hugo","elba","mink","town","clam","feud","fern","dung","newt","mime","deem","inti","gigs","sosa","lope","lard","cara","smug","lego","flex","doth","paar","moon","wren","tale","kant","eels","muck","toga","zens","lops","duet","coil","gall","teal","glib","muir","ails","boer","them","rake","conn","neat","frog","trip","coma","must","mono","lira","craw","sled","wear","toby","reel","hips","nate","pump","mont","died","moss","lair","jibe","oils","pied","hobs","cads","haze","muse","cogs","figs","cues","roes","whet","boru","cozy","amos","tans","news","hake","cots","boas","tutu","wavy","pipe","typo","albs","boom","dyke","wail","woke","ware","rita","fail","slab","owes","jane","rack","hell","lags","mend","mask","hume","wane","acne","team","holy","runs","exes","dole","trim","zola","trek","puma","wacs","veep","yaps","sums","lush","tubs","most","witt","bong","rule","hear","awry","sots","nils","bash","gasp","inch","pens","fies","juts","pate","vine","zulu","this","bare","veal","josh","reek","ours","cowl","club","farm","teat","coat","dish","fore","weft","exam","vlad","floe","beak","lane","ella","warp","goth","ming","pits","rent","tito","wish","amps","says","hawk","ways","punk","nark","cagy","east","paul","bose","solo","teed","text","hews","snip","lips","emit","orgy","icon","tuna","soul","kurd","clod","calk","aunt","bake","copy","acid","duse","kiln","spec","fans","bani","irma","pads","batu","logo","pack","oder","atop","funk","gide","bede","bibs","taut","guns","dana","puff","lyme","flat","lake","june","sets","gull","hops","earn","clip","fell","kama","seal","diaz","cite","chew","cuba","bury","yard","bank","byes","apia","cree","nosh","judo","walk","tape","taro","boot","cods","lade","cong","deft","slim","jeri","rile","park","aeon","fact","slow","goff","cane","earp","tart","does","acts","hope","cant","buts","shin","dude","ergo","mode","gene","lept","chen","beta","eden","pang","saab","fang","whir","cove","perk","fads","rugs","herb","putt","nous","vane","corm","stay","bids","vela","roof","isms","sics","gone","swum","wiry","cram","rink","pert","heap","sikh","dais","cell","peel","nuke","buss","rasp","none","slut","bent","dams","serb","dork","bays","kale","cora","wake","welt","rind","trot","sloe","pity","rout","eves","fats","furs","pogo","beth","hued","edam","iamb","glee","lute","keel","airy","easy","tire","rube","bogy","sine","chop","rood","elbe","mike","garb","jill","gaul","chit","dons","bars","ride","beck","toad","make","head","suds","pike","snot","swat","peed","same","gaza","lent","gait","gael","elks","hang","nerf","rosy","shut","glop","pain","dion","deaf","hero","doer","wost","wage","wash","pats","narc","ions","dice","quay","vied","eons","case","pour","urns","reva","rags","aden","bone","rang","aura","iraq","toot","rome","hals","megs","pond","john","yeps","pawl","warm","bird","tint","jowl","gibe","come","hold","pail","wipe","bike","rips","eery","kent","hims","inks","fink","mott","ices","macy","serf","keys","tarp","cops","sods","feet","tear","benz","buys","colo","boil","sews","enos","watt","pull","brag","cork","save","mint","feat","jamb","rubs","roxy","toys","nosy","yowl","tamp","lobs","foul","doom","sown","pigs","hemp","fame","boor","cube","tops","loco","lads","eyre","alta","aged","flop","pram","lesa","sawn","plow","aral","load","lied","pled","boob","bert","rows","zits","rick","hint","dido","fist","marc","wuss","node","smog","nora","shim","glut","bale","perl","what","tort","meek","brie","bind","cake","psst","dour","jove","tree","chip","stud","thou","mobs","sows","opts","diva","perm","wise","cuds","sols","alan","mild","pure","gail","wins","offs","nile","yelp","minn","tors","tran","homy","sadr","erse","nero","scab","finn","mich","turd","then","poem","noun","oxus","brow","door","saws","eben","wart","wand","rosa","left","lina","cabs","rapt","olin","suet","kalb","mans","dawn","riel","temp","chug","peal","drew","null","hath","many","took","fond","gate","sate","leak","zany","vans","mart","hess","home","long","dirk","bile","lace","moog","axes","zone","fork","duct","rico","rife","deep","tiny","hugh","bilk","waft","swig","pans","with","kern","busy","film","lulu","king","lord","veda","tray","legs","soot","ells","wasp","hunt","earl","ouch","diem","yell","pegs","blvd","polk","soda","zorn","liza","slop","week","kill","rusk","eric","sump","haul","rims","crop","blob","face","bins","read","care","pele","ritz","beau","golf","drip","dike","stab","jibs","hove","junk","hoax","tats","fief","quad","peat","ream","hats","root","flak","grit","clap","pugh","bosh","lock","mute","crow","iced","lisa","bela","fems","oxes","vies","gybe","huff","bull","cuss","sunk","pups","fobs","turf","sect","atom","debt","sane","writ","anon","mayo","aria","seer","thor","brim","gawk","jack","jazz","menu","yolk","surf","libs","lets","bans","toil","open","aced","poor","mess","wham","fran","gina","dote","love","mood","pale","reps","ines","shot","alar","twit","site","dill","yoga","sear","vamp","abel","lieu","cuff","orbs","rose","tank","gape","guam","adar","vole","your","dean","dear","hebe","crab","hump","mole","vase","rode","dash","sera","balk","lela","inca","gaea","bush","loud","pies","aide","blew","mien","side","kerr","ring","tess","prep","rant","lugs","hobo","joke","odds","yule","aida","true","pone","lode","nona","weep","coda","elmo","skim","wink","bras","pier","bung","pets","tabs","ryan","jock","body","sofa","joey","zion","mace","kick","vile","leno","bali","fart","that","redo","ills","jogs","pent","drub","slaw","tide","lena","seep","gyps","wave","amid","fear","ties","flan","wimp","kali","shun","crap","sage","rune","logs","cain","digs","abut","obit","paps","rids","fair","hack","huns","road","caws","curt","jute","fisk","fowl","duty","holt","miss","rude","vito","baal","ural","mann","mind","belt","clem","last","musk","roam","abed","days","bore","fuze","fall","pict","dump","dies","fiat","vent","pork","eyed","docs","rive","spas","rope","ariz","tout","game","jump","blur","anti","lisp","turn","sand","food","moos","hoop","saul","arch","fury","rise","diss","hubs","burs","grid","ilks","suns","flea","soil","lung","want","nola","fins","thud","kidd","juan","heps","nape","rash","burt","bump","tots","brit","mums","bole","shah","tees","skip","limb","umps","ache","arcs","raft","halo","luce","bahs","leta","conk","duos","siva","went","peek","sulk","reap","free","dubs","lang","toto","hasp","ball","rats","nair","myst","wang","snug","nash","laos","ante","opal","tina","pore","bite","haas","myth","yugo","foci","dent","bade","pear","mods","auto","shop","etch","lyly","curs","aron","slew","tyro","sack","wade","clio","gyro","butt","icky","char","itch","halt","gals","yang","tend","pact","bees","suit","puny","hows","nina","brno","oops","lick","sons","kilo","bust","nome","mona","dull","join","hour","papa","stag","bern","wove","lull","slip","laze","roil","alto","bath","buck","alma","anus","evil","dumb","oreo","rare","near","cure","isis","hill","kyle","pace","comb","nits","flip","clop","mort","thea","wall","kiel","judd","coop","dave","very","amie","blah","flub","talc","bold","fogy","idea","prof","horn","shoo","aped","pins","helm","wees","beer","womb","clue","alba","aloe","fine","bard","limo","shaw","pint","swim","dust","indy","hale","cats","troy","wens","luke","vern","deli","both","brig","daub","sara","sued","bier","noel","olga","dupe","look","pisa","knox","murk","dame","matt","gold","jame","toge","luck","peck","tass","calf","pill","wore","wadi","thur","parr","maul","tzar","ones","lees","dark","fake","bast","zoom","here","moro","wine","bums","cows","jean","palm","fume","plop","help","tuba","leap","cans","back","avid","lice","lust","polo","dory","stew","kate","rama","coke","bled","mugs","ajax","arts","drug","pena","cody","hole","sean","deck","guts","kong","bate","pitt","como","lyle","siam","rook","baby","jigs","bret","bark","lori","reba","sups","made","buzz","gnaw","alps","clay","post","viol","dina","card","lana","doff","yups","tons","live","kids","pair","yawl","name","oven","sirs","gyms","prig","down","leos","noon","nibs","cook","safe","cobb","raja","awes","sari","nerd","fold","lots","pete","deal","bias","zeal","girl","rage","cool","gout","whey","soak","thaw","bear","wing","nagy","well","oink","sven","kurt","etna","held","wood","high","feta","twee","ford","cave","knot","tory","ibis","yaks","vets","foxy","sank","cone","pius","tall","seem","wool","flap","gird","lore","coot","mewl","sere","real","puts","sell","nuts","foil","lilt","saga","heft","dyed","goat","spew","daze","frye","adds","glen","tojo","pixy","gobi","stop","tile","hiss","shed","hahn","baku","ahas","sill","swap","also","carr","manx","lime","debs","moat","eked","bola","pods","coon","lacy","tube","minx","buff","pres","clew","gaff","flee","burn","whom","cola","fret","purl","wick","wigs","donn","guys","toni","oxen","wite","vial","spam","huts","vats","lima","core","eula","thad","peon","erie","oats","boyd","cued","olaf","tams","secs","urey","wile","penn","bred","rill","vary","sues","mail","feds","aves","code","beam","reed","neil","hark","pols","gris","gods","mesa","test","coup","heed","dora","hied","tune","doze","pews","oaks","bloc","tips","maid","goof","four","woof","silo","bray","zest","kiss","yong","file","hilt","iris","tuns","lily","ears","pant","jury","taft","data","gild","pick","kook","colt","bohr","anal","asps","babe","bach","mash","biko","bowl","huey","jilt","goes","guff","bend","nike","tami","gosh","tike","gees","urge","path","bony","jude","lynn","lois","teas","dunn","elul","bonn","moms","bugs","slay","yeah","loan","hulk","lows","damn","nell","jung","avis","mane","waco","loin","knob","tyke","anna","hire","luau","tidy","nuns","pots","quid","exec","hans","hera","hush","shag","scot","moan","wald","ursa","lorn","hunk","loft","yore","alum","mows","slog","emma","spud","rice","worn","erma","need","bags","lark","kirk","pooh","dyes","area","dime","luvs","foch","refs","cast","alit","tugs","even","role","toed","caph","nigh","sony","bide","robs","folk","daft","past","blue","flaw","sana","fits","barr","riot","dots","lamp","cock","fibs","harp","tent","hate","mali","togs","gear","tues","bass","pros","numb","emus","hare","fate","wife","mean","pink","dune","ares","dine","oily","tony","czar","spay","push","glum","till","moth","glue","dive","scad","pops","woks","andy","leah","cusp","hair","alex","vibe","bulb","boll","firm","joys","tara","cole","levy","owen","chow","rump","jail","lapp","beet","slap","kith","more","maps","bond","hick","opus","rust","wist","shat","phil","snow","lott","lora","cary","mote","rift","oust","klee","goad","pith","heep","lupe","ivan","mimi","bald","fuse","cuts","lens","leer","eyry","know","razz","tare","pals","geek","greg","teen","clef","wags","weal","each","haft","nova","waif","rate","katy","yale","dale","leas","axum","quiz","pawn","fend","capt","laws","city","chad","coal","nail","zaps","sort","loci","less","spur","note","foes","fags","gulp","snap","bogs","wrap","dane","melt","ease","felt","shea","calm","star","swam","aery","year","plan","odin","curd","mira","mops","shit","davy","apes","inky","hues","lome","bits","vila","show","best","mice","gins","next","roan","ymir","mars","oman","wild","heal","plus","erin","rave","robe","fast","hutu","aver","jodi","alms","yams","zero","revs","wean","chic","self","jeep","jobs","waxy","duel","seek","spot","raps","pimp","adan","slam","tool","morn","futz","ewes","errs","knit","rung","kans","muff","huhs","tows","lest","meal","azov","gnus","agar","sips","sway","otis","tone","tate","epic","trio","tics","fade","lear","owns","robt","weds","five","lyon","terr","arno","mama","grey","disk","sept","sire","bart","saps","whoa","turk","stow","pyle","joni","zinc","negs","task","leif","ribs","malt","nine","bunt","grin","dona","nope","hams","some","molt","smit","sacs","joan","slav","lady","base","heck","list","take","herd","will","nubs","burg","hugs","peru","coif","zoos","nick","idol","levi","grub","roth","adam","elma","tags","tote","yaws","cali","mete","lula","cubs","prim","luna","jolt","span","pita","dodo","puss","deer","term","dolt","goon","gary","yarn","aims","just","rena","tine","cyst","meld","loki","wong","were","hung","maze","arid","cars","wolf","marx","faye","eave","raga","flow","neal","lone","anne","cage","tied","tilt","soto","opel","date","buns","dorm","kane","akin","ewer","drab","thai","jeer","grad","berm","rods","saki","grus","vast","late","lint","mule","risk","labs","snit","gala","find","spin","ired","slot","oafs","lies","mews","wino","milk","bout","onus","tram","jaws","peas","cleo","seat","gums","cold","vang","dewy","hood","rush","mack","yuan","odes","boos","jami","mare","plot","swab","borg","hays","form","mesh","mani","fife","good","gram","lion","myna","moor","skin","posh","burr","rime","done","ruts","pays","stem","ting","arty","slag","iron","ayes","stub","oral","gets","chid","yens","snub","ages","wide","bail","verb","lamb","bomb","army","yoke","gels","tits","bork","mils","nary","barn","hype","odom","avon","hewn","rios","cams","tact","boss","oleo","duke","eris","gwen","elms","deon","sims","quit","nest","font","dues","yeas","zeta","bevy","gent","torn","cups","worm","baum","axon","purr","vise","grew","govs","meat","chef","rest","lame"], 11),
+		("zings","brown",["chump","sours","mcgee","piers","match","folds","rinse","films","small","umbel","assad","morin","plied","basin","moots","blurb","suits","solve","sooty","fluky","bombs","nurse","ceres","lopes","yucky","ricks","goads","loses","coyly","marcy","bonds","niece","cures","sonic","crows","dicey","gaped","buggy","riles","homer","fakir","hello","riper","makes","laked","sinus","fangs","acton","spiky","salts","boots","skiff","maker","pence","fells","cedar","kited","raved","flake","jiffy","tanks","barns","sized","gluts","amman","jumps","cavil","quaff","rents","looms","toner","gibes","aside","drawn","karin","torte","haded","psych","hacks","jesus","fumed","lisle","spays","sumps","beats","tunas","naked","bathe","gulfs","karma","snuff","boast","grins","turds","plant","spicy","risen","tints","tomas","stand","noses","toxin","sheep","paddy","abase","jeeps","dated","tough","timid","forty","kusch","pones","smack","token","havel","vanes","repay","chums","paved","chimp","spinx","smirk","pupas","bares","mites","egged","palsy","gyros","wolfe","chips","pouts","johns","barbs","slunk","hires","seals","rally","tromp","roads","writs","aches","corny","fiats","hench","gilts","blake","phony","drams","skimp","suing","horus","hewer","barfs","hewed","needs","epsom","knots","tided","befit","eager","melva","coves","plush","pawed","zebra","gales","blots","foggy","rooks","comas","laxly","cries","kirks","monks","magic","fugue","apter","limos","congo","rosin","seder","bones","holes","fated","gamay","snags","wimpy","rites","gilds","slink","staph","sioux","bends","wilma","warts","reeds","yolks","lover","demon","salve","hulas","shard","worst","leach","omits","flint","tines","julio","trots","silly","cocks","gleam","react","camps","nicks","bored","coded","swine","scope","aloes","south","hands","rainy","david","newer","ferns","jelly","index","gibbs","truly","tubes","opera","raven","noyce","whims","titus","hared","vined","dealt","slats","erick","rolls","breed","udder","oozed","prays","tsars","harry","shelf","norms","larks","hazes","brice","gifts","units","veeps","dumas","mommy","spock","dotty","molls","slobs","diane","buddy","boost","ginny","rends","marks","timur","bands","genes","slews","leeds","karyn","mobil","mixes","ronny","sadly","rinks","smash","baled","pulpy","toils","yards","piing","dried","veils","spook","snaky","sizer","spout","percy","sheol","blank","waxes","herod","attar","doped","polls","banes","penny","knelt","laded","manic","acids","squat","jerry","stony","woofs","idles","bruin","carla","sheik","hodge","goody","merge","nicer","scums","evens","lames","wends","midge","jives","tuner","reins","boars","fryer","realm","dyson","narks","torts","yawed","waked","cress","curvy","bongs","fared","jilts","liens","ducat","shaft","pesos","dulls","donna","potty","winks","marsh","giddy","tiffs","scoot","nifty","daisy","slots","stacy","colby","skims","malls","sifts","jinns","flank","molar","hatch","wiped","taped","clink","brims","credo","fezes","molds","finds","quids","terra","damns","dusky","wanes","musty","barer","snare","honey","piked","wiser","elvin","dolly","fetal","ships","reign","cause","caved","mecca","blink","close","birth","pints","reefs","amado","comae","waite","willy","lorry","nixed","quire","napes","voted","eldon","nappy","myles","laser","pesky","leant","septa","mucks","agree","sworn","lofty","slush","holst","tevet","wases","cheer","torah","treks","purge","class","popes","roans","curve","quads","magma","drier","hales","chess","prigs","sivan","romes","finch","peels","mousy","atria","offer","coals","crash","tauts","oinks","dazed","flaps","truck","treed","colas","petty","marty","cadet","clips","zones","wooed","haves","grays","gongs","minis","macaw","horde","witch","flows","heady","fuels","conks","lifts","tumid","husks","irony","pines","glops","fonds","covey","chino","riggs","tonya","slavs","caddy","poled","blent","mired","whose","scows","forte","hikes","riped","knobs","wroth","bagel","basks","nines","scams","males","holed","solid","farms","glaxo","poise","drays","ryder","slash","rajas","goons","bowed","shirt","blurs","fussy","rills","loren","helps","feels","fiefs","hines","balms","blobs","fiord","light","dinky","maids","sagas","joked","pyxed","lilly","leers","galls","malts","minos","ionic","lower","peale","ratty","tuber","newed","whirl","eases","wests","herds","clods","floes","skate","weeds","tones","rangy","kings","adder","pitts","smith","coats","lenny","sorta","floss","looks","angie","peppy","upper","darin","white","lofts","clint","jared","heros","ruler","tonia","sexed","grail","villa","topic","kenny","dopes","hoots","boobs","gerry","eries","lyres","lunch","glove","cumin","harms","races","today","crust","track","mends","snout","shark","iliad","shrew","dorky","monty","dodge","toted","worse","dream","weird","gaunt","damon","rimes","layer","salem","bards","dills","hobby","gives","shall","crazy","brace","faxed","pools","foamy","viral","strop","liver","ceded","jolts","jonah","tight","lilia","hussy","mutts","crate","girls","marge","hypos","mewls","bulls","gazes","wands","avior","sonya","slick","clump","cater","aural","agave","grief","shana","fices","moans","grape","fetid","jenna","humus","poesy","cooks","still","lease","wanda","oddly","areas","frats","imply","files","ramon","seuss","hubby","wakes","rural","nodal","doric","carry","chefs","fails","klaus","shine","filly","yawls","brows","cabby","favor","styli","filed","jinni","ferry","balls","lakes","voled","drone","lusty","tansy","among","trail","liven","slake","madge","steps","donne","sties","picks","lacks","jumpy","meade","bogie","bauer","scene","lubes","brigs","label","fines","grebe","limns","mouse","ensue","swags","bunch","kayla","micky","sneak","bulbs","camus","yours","aisha","dunne","volta","cores","dweeb","libby","flees","shops","bided","satan","socks","draws","golfs","taunt","genus","belts","orbit","taxis","hinds","fakes","chart","wings","words","digit","copse","deena","perry","sanes","huffy","chung","lucks","fills","selma","wafts","pecks","trite","combs","sooth","weary","salty","brews","kooky","robby","loans","props","huang","marry","swabs","tinny","mince","japed","ellis","lowed","newly","loath","drown","loved","joker","lints","kinky","skits","feats","hiker","doles","every","dolby","stirs","lobed","fusty","cozen","vader","byron","dozes","slows","bethe","ploys","misty","binds","bumpy","spurs","wolfs","ernie","nails","prows","seeds","visas","dowse","pores","jocks","cower","hoofs","mined","marat","gorge","souse","clack","liter","jewel","hates","boats","stark","blabs","murks","woken","stomp","peeks","perky","pasta","goats","hocks","kinks","gushy","outdo","gelds","foxes","fives","sybil","upton","taine","helga","mauls","gills","grows","bauds","aloft","cline","payer","pinch","thorn","slits","thumb","biked","cowls","grams","disks","belly","randy","hunts","prize","minty","river","chevy","gages","cysts","years","scoff","becky","inert","abler","bevel","dyers","tonne","glows","ocean","spits","bowen","tings","baths","goals","whiny","merry","fares","leila","cairo","honor","verge","teary","pimps","sarah","meets","tamed","bumps","alias","pings","wears","dante","snore","ruled","savor","gapes","loony","chaps","froth","fancy","herbs","cutes","crowd","ghana","teddy","abate","scalp","mules","patsy","minks","shuck","billy","helen","stain","moles","jodie","homed","stack","niger","denny","kinds","elves","waled","rover","medan","churn","whizz","green","reach","lajos","mates","ditch","grads","start","press","rimed","hells","vised","slums","notes","canes","taper","camry","weans","sinks","arise","crown","prier","ramps","wotan","chars","mussy","rodes","sonar","cheri","sired","snell","basel","eider","sades","times","ovule","gusto","myrna","gabby","dully","spake","beast","towns","allay","gaged","smell","skids","clone","slack","pooch","vulva","arson","blown","kongo","maize","thick","brags","spore","soles","trial","snort","price","bowel","stoke","pents","hutch","flack","arced","cubic","hiram","tongs","lades","coons","finer","games","unpin","vests","slabs","santa","tamer","asian","tease","miked","lodes","vents","leafy","stats","shuts","bully","edith","bloch","corps","bloom","doses","coins","skips","gains","hided","coops","ninja","pills","raves","hanks","seres","ewing","bests","wrath","burgs","thrum","cabin","daren","imams","junks","brood","bacon","creel","gazed","teats","halos","gypsy","ether","train","tiles","bulks","bolls","added","roger","sites","balmy","tilts","swoop","jules","bawdy","mango","stoop","girts","costs","lemur","yucks","swazi","okays","piped","ticks","tomes","filch","depth","meals","coots","bites","pansy","spelt","leeks","hills","drops","verde","japes","holds","bangs","maxed","plume","frets","lymph","modes","twits","devon","cawed","putty","sowed","likes","quips","board","loxed","slags","dilly","refit","saved","takes","meter","prove","spacy","poach","cilia","pears","lists","gated","verdi","shave","notch","culls","shams","weedy","gaols","hoops","kraft","burro","roles","rummy","click","plots","mitty","yanks","drool","papal","rearm","prose","fucks","berra","salas","tents","flues","loves","poker","parry","polyp","agent","flown","walls","studs","troll","baron","earle","panda","wiley","raged","sexes","berne","vista","rojas","cones","byway","vases","wines","forth","freya","gully","fires","sails","dusts","terse","booed","stung","basic","saver","basis","hmong","brawn","pured","locks","downs","punts","rhine","metes","title","shims","bents","blows","harte","boyle","peach","posts","olson","might","flier","rubes","lingo","tarts","nexus","woman","mains","finis","mikes","pleas","trams","shawl","gunny","sleds","ruder","aries","usher","refed","toady","caper","tries","gimpy","doors","thieu","deere","mucky","rests","mares","cards","bouts","dines","rants","giles","flunk","enact","derek","dover","conan","mooed","fiver","kaput","enrol","payed","feint","miner","shyer","whelk","perch","furor","hayes","tammy","caves","maims","cairn","tract","legal","adler","veldt","basal","spiny","surer","bolds","grove","heaps","noway","pokes","tubed","beaks","loots","drawl","jones","typed","funny","cells","beaus","bayed","rears","seats","hazed","flubs","maura","goths","rumba","morse","fumes","slide","snoot","music","sully","perth","pocks","mills","lopez","sacks","stine","gawks","gavel","rains","wound","hares","guild","leger","foxed","craws","rinds","faced","groom","lully","boded","lends","serge","sword","faked","envoy","stick","tumor","riser","bolts","trued","gasps","thoth","veers","verbs","boles","lunar","taxes","vexes","pucks","welsh","pelts","shift","booth","smote","spied","gnawn","crete","dough","tasha","timed","wired","state","hears","lauds","wills","dummy","basil","belie","calls","crams","matts","gybes","limed","snots","moder","faces","sibyl","spare","crops","drips","frown","doggy","pearl","reese","curls","earns","poles","tiara","risks","lethe","titan","tucks","trace","vises","prick","sears","ogled","preps","livid","kicky","candy","weeps","tapes","cokes","foods","wards","coifs","shirk","elsie","ketch","trunk","goofs","kodak","toyed","lance","whale","soups","roars","poxed","tombs","noons","hindi","basie","hoffa","bayou","tests","roots","shove","hoses","doled","tempt","kilos","velma","avers","dorks","comic","fanny","poops","sicks","leary","merer","finks","garbo","cains","mimed","sates","celli","flats","grown","broth","augur","chaos","sangs","chide","barks","guide","mewed","synch","rings","scrap","zings","howls","duded","noemi","geeks","nexis","comte","helot","whams","brand","hogan","moira","trips","loges","baits","winds","marla","never","louis","anted","helix","morns","heeds","crags","rowdy","becks","venue","diary","stoat","feeds","kiths","riled","drags","lucia","deeps","sends","fonts","swing","fence","stout","trice","taker","drugs","babel","plows","pends","sloes","gents","brawl","arabs","leaps","flied","fulls","meats","megan","burch","oscar","evict","betsy","lasts","ethos","mavis","petal","fever","alone","snips","assay","rocks","talon","grass","clive","discs","wrapt","calfs","razed","learn","bruce","midst","swear","merck","meyer","funks","lobby","fears","decay","sedge","alien","reaps","koran","range","enter","lepke","honed","gallo","staid","joist","lines","paler","fined","sorts","piper","highs","busch","dario","north","ashed","sands","songs","rakes","garza","pinks","rival","leann","allow","golds","hilts","berry","hicks","idler","weiss","cider","desks","skies","hulls","warns","datum","brown","leapt","dregs","dozed","stump","reply","finny","clues","diode","dicks","rabid","moors","limbs","gulls","scary","dungs","liege","vicky","nigel","peeps","dolls","blame","sings","wants","fuzes","proud","bungs","seams","bingo","buffs","shire","decks","hosed","scots","pumas","jazzy","books","ellie","hayed","snowy","twill","links","coped","spats","reyes","piles","hovel","reads","wryer","patty","sling","oneal","waves","gorse","ofter","teams","strep","mores","daily","spoil","limes","foots","dells","hakes","danny","furls","flaws","tarot","dusty","potts","tells","pager","claps","serra","josie","award","pewee","snack","lobes","damps","tanya","lures","mushy","hertz","caret","marco","parks","pithy","synge","spoon","troth","drama","bleak","lidia","banns","forms","iambs","crick","patel","mercy","waded"], 12),
+		("a","c",["a","b","c"], 2),
+		("hot","dog",["hot","dog","dot"], 3),
+
+	]
+
+	for case in testCase:
+		if test_module.wordLadder(case[0], case[1], case[2]) != case[3]:
+			raise RuntimeError("testWordLadder failed!! %s, %s, %s" % (case[0], case[1], case[2]))
+
+	print "testWordLadder done!"
+
+def testSurroundedRegons():
+	testCase = [
+		([], []),
+		(["XOXX","OXOX","XOXO","OXOX","XOXO","OXOX"], ['XOXX', 'OXXX', 'XXXO', 'OXXX', 'XXXO', 'OXOX']),
+		(['XOXOOOO', 'XOXXOXO', 'XXOOOOX', 'XOOOXOX', 'OXXXXOX', 'XOOOXOX', 'XXOOXOX'], ['XOXOOOO', 'XOXXOXO', 'XXOOOOX', 'XOOOXOX', 'OXXXXOX', 'XOOOXOX', 'XXOOXOX']),
+		(['OOOXOXX', 'XXXXXXO', 'XOOOOXX', 'XXOOXXX', 'OOXOXOO', 'OOOXOXO', 'OOXOOXX'], ['OOOXOXX', 'XXXXXXO', 'XXXXXXX', 'XXXXXXX', 'OOXXXOO', 'OOOXOXO', 'OOXOOXX']),
+		(['OXOXXOX', 'OOOXOXO', 'XOXOXOX', 'OXXXOXO', 'OXOOOXO', 'XXXOXXO', 'XXOOXOX'], ['OXOXXOX', 'OOOXXXO', 'XOXXXXX', 'OXXXOXO', 'OXOOOXO', 'XXXOXXO', 'XXOOXOX']),
+		(['OOOXO', 'OXOXX', 'OOXOX', 'XXXOO', 'OXXOO'], ['OOOXO', 'OXOXX', 'OOXOX', 'XXXOO', 'OXXOO']),
+		(['OOOXOXX', 'OXOXXXO', 'XXXXOXX', 'OXOOXOO', 'XXOXXXX', 'OXOOXOO', 'XOOOOXX'], ['OOOXOXX', 'OXOXXXO', 'XXXXXXX', 'OXOOXOO', 'XXOXXXX', 'OXOOXOO', 'XOOOOXX']),
+		(['OXOXOOX', 'XXXOOOX', 'OXOOOOO', 'OOOOXOO', 'XOXOOOO', 'XOXOOOO', 'XXXOOOO'], ['OXOXOOX', 'XXXOOOX', 'OXOOOOO', 'OOOOXOO', 'XOXOOOO', 'XOXOOOO', 'XXXOOOO']),
+		(['XOOOO', 'XXXXX', 'XXXOX', 'OXXXO', 'XXXOX'], ['XOOOO', 'XXXXX', 'XXXXX', 'OXXXO', 'XXXOX']),
+		(['OOOOXXX', 'OXXXXOO', 'XXXXXOO', 'OOXOOXO', 'XXXOOXO', 'OXOXOOO', 'OOOXXXO'], ['OOOOXXX', 'OXXXXOO', 'XXXXXOO', 'OOXOOXO', 'XXXOOXO', 'OXOXOOO', 'OOOXXXO']),
+		(['OOXXX', 'OXXXX', 'OXXOX', 'OOOOO', 'OXOXO'], ['OOXXX', 'OXXXX', 'OXXOX', 'OOOOO', 'OXOXO']),
+		(['XXOXXX', 'XOXOXX', 'OXOXOO', 'OOXXXO', 'XOXOXX', 'XOOXXX'], ['XXOXXX', 'XXXXXX', 'OXXXOO', 'OOXXXO', 'XOXXXX', 'XOOXXX']),
+		(['OOXOOOX', 'OOXXXXX', 'XOXXOOX', 'XOXXOOO', 'OXXXXXX', 'XOOOXOX', 'XXXOOOO'], ['OOXOOOX', 'OOXXXXX', 'XOXXOOX', 'XOXXOOO', 'OXXXXXX', 'XOOOXOX', 'XXXOOOO']),
+		(['OXOXX', 'OXOOO', 'XXOXO', 'XOXXO', 'OOOOX'], ['OXOXX', 'OXOOO', 'XXOXO', 'XOXXO', 'OOOOX']),
+		(['XOXXX', 'OOOOX', 'OOXXX', 'XXOXX', 'OXOOX'], ['XOXXX', 'OOOOX', 'OOXXX', 'XXOXX', 'OXOOX']),
+		(['XOXOOXX', 'OXOXXOX', 'XXXXXXX', 'OOOXXOX', 'OOXOXXX', 'OOXOOOO', 'XOXOXXO'], ['XOXOOXX', 'OXXXXXX', 'XXXXXXX', 'OOOXXXX', 'OOXOXXX', 'OOXOOOO', 'XOXOXXO']),
+		(['XOXOX', 'XOOOO', 'OXXOO', 'OOOXX', 'OXOOO'], ['XOXOX', 'XOOOO', 'OXXOO', 'OOOXX', 'OXOOO']),
+		(['OOOXO', 'XXXOO', 'XOOXX', 'XOOOO', 'OOOXX'], ['OOOXO', 'XXXOO', 'XOOXX', 'XOOOO', 'OOOXX']),
+		(['OOXXOX', 'XOXOXO', 'OXOXXX', 'OOXXOX', 'XOXOOO', 'XXOXOO'], ['OOXXOX', 'XOXXXO', 'OXXXXX', 'OOXXOX', 'XOXOOO', 'XXOXOO']),
+		(['XOXOXX', 'OOXXXX', 'XXOOXX', 'OOOXXX', 'OXOOXO', 'OOOOOX'], ['XOXOXX', 'OOXXXX', 'XXOOXX', 'OOOXXX', 'OXOOXO', 'OOOOOX']),
+		(['XXOXOXO', 'OOOXOXO', 'OOOXOXX', 'XXXXXOO', 'OXXOXXO', 'OOOOOOX', 'XXOXXOO'], ['XXOXOXO', 'OOOXOXO', 'OOOXOXX', 'XXXXXOO', 'OXXOXXO', 'OOOOOOX', 'XXOXXOO']),
+		(['OOXOOXO', 'XXOOOXX', 'XXOXXOX', 'OXXOOOO', 'XOOXOXX', 'OXXXOOX', 'XOOXOOO'], ['OOXOOXO', 'XXOOOXX', 'XXOXXOX', 'OXXOOOO', 'XXXXOXX', 'OXXXOOX', 'XOOXOOO']),
+		(['XXXOOXO', 'OXOXXXX', 'OOXOOXO', 'XOOXOXO', 'XOOXOOX', 'XOOXOOX', 'OXXOXOX'], ['XXXOOXO', 'OXXXXXX', 'OOXOOXO', 'XOOXOXO', 'XOOXOOX', 'XOOXOOX', 'OXXOXOX']),
+		(['OXXOXO', 'OOXOOX', 'OOOXXO', 'XXXOXX', 'OXXOXO', 'OXOOOO'], ['OXXOXO', 'OOXOOX', 'OOOXXO', 'XXXOXX', 'OXXOXO', 'OXOOOO']),
+		(['XXXXOO', 'OXXXXO', 'XXXXOX', 'XOXXOO', 'OOXOXX', 'XOOOXX'], ['XXXXOO', 'OXXXXO', 'XXXXOX', 'XOXXOO', 'OOXOXX', 'XOOOXX']),
+		(['OXOXO', 'XOOOX', 'XXOXX', 'XXOOO', 'XOXXX'], ['OXOXO', 'XOOOX', 'XXOXX', 'XXOOO', 'XOXXX']),
+		(['XOXOOOX', 'XXOXOXX', 'OXXOXOX', 'OXOOOXX', 'XXXXOOO', 'XXOOXOO', 'OOXXXXX'], ['XOXOOOX', 'XXXXOXX', 'OXXOXXX', 'OXOOOXX', 'XXXXOOO', 'XXXXXOO', 'OOXXXXX']),
+	]
+
+	for case in testCase:
+		matrix = [[x for x in row] for row in case[0]]
+		test_module.surroundedRegons(matrix)
+		ret = ["".join(row) for row in matrix]
+		if ret != case[1]:
+			#print ret
+			raise RuntimeError("testSurroundedRegons failed!! %s" % case[0])
+
+	print "testSurroundedRegons done!"
+
+def testPalindromePartition():
+	testCase = [
+		("", [[]]),
+		("a", [['a']]),
+		("ltsqjodzeriqdtyewsrpfscozbyrpidadvsmlylqrviuqiynbscgmhulkvdzdicgdwvquigoepiwxjlydogpxdahyfhdnljshgjeprsvgctgnfgqtnfsqizonirdtcvblehcwbzedsmrxtjsipkyxk", [['l', 't', 's', 'q', 'j', 'o', 'd', 'z', 'e', 'r', 'i', 'q', 'd', 't', 'y', 'e', 'w', 's', 'r', 'p', 'f', 's', 'c', 'o', 'z', 'b', 'y', 'r', 'p', 'i', 'd', 'a', 'd', 'v', 's', 'm', 'l', 'y', 'l', 'q', 'r', 'v', 'i', 'u', 'q', 'i', 'y', 'n', 'b', 's', 'c', 'g', 'm', 'h', 'u', 'l', 'k', 'v', 'd', 'z', 'd', 'i', 'c', 'g', 'd', 'w', 'v', 'q', 'u', 'i', 'g', 'o', 'e', 'p', 'i', 'w', 'x', 'j', 'l', 'y', 'd', 'o', 'g', 'p', 'x', 'd', 'a', 'h', 'y', 'f', 'h', 'd', 'n', 'l', 'j', 's', 'h', 'g', 'j', 'e', 'p', 'r', 's', 'v', 'g', 'c', 't', 'g', 'n', 'f', 'g', 'q', 't', 'n', 'f', 's', 'q', 'i', 'z', 'o', 'n', 'i', 'r', 'd', 't', 'c', 'v', 'b', 'l', 'e', 'h', 'c', 'w', 'b', 'z', 'e', 'd', 's', 'm', 'r', 'x', 't', 'j', 's', 'i', 'p', 'k', 'y', 'x', 'k'], ['l', 't', 's', 'q', 'j', 'o', 'd', 'z', 'e', 'r', 'i', 'q', 'd', 't', 'y', 'e', 'w', 's', 'r', 'p', 'f', 's', 'c', 'o', 'z', 'b', 'y', 'r', 'p', 'i', 'd', 'a', 'd', 'v', 's', 'm', 'l', 'y', 'l', 'q', 'r', 'v', 'i', 'u', 'q', 'i', 'y', 'n', 'b', 's', 'c', 'g', 'm', 'h', 'u', 'l', 'k', 'v', 'dzd', 'i', 'c', 'g', 'd', 'w', 'v', 'q', 'u', 'i', 'g', 'o', 'e', 'p', 'i', 'w', 'x', 'j', 'l', 'y', 'd', 'o', 'g', 'p', 'x', 'd', 'a', 'h', 'y', 'f', 'h', 'd', 'n', 'l', 'j', 's', 'h', 'g', 'j', 'e', 'p', 'r', 's', 'v', 'g', 'c', 't', 'g', 'n', 'f', 'g', 'q', 't', 'n', 'f', 's', 'q', 'i', 'z', 'o', 'n', 'i', 'r', 'd', 't', 'c', 'v', 'b', 'l', 'e', 'h', 'c', 'w', 'b', 'z', 'e', 'd', 's', 'm', 'r', 'x', 't', 'j', 's', 'i', 'p', 'k', 'y', 'x', 'k'], ['l', 't', 's', 'q', 'j', 'o', 'd', 'z', 'e', 'r', 'i', 'q', 'd', 't', 'y', 'e', 'w', 's', 'r', 'p', 'f', 's', 'c', 'o', 'z', 'b', 'y', 'r', 'p', 'i', 'd', 'a', 'd', 'v', 's', 'm', 'lyl', 'q', 'r', 'v', 'i', 'u', 'q', 'i', 'y', 'n', 'b', 's', 'c', 'g', 'm', 'h', 'u', 'l', 'k', 'v', 'd', 'z', 'd', 'i', 'c', 'g', 'd', 'w', 'v', 'q', 'u', 'i', 'g', 'o', 'e', 'p', 'i', 'w', 'x', 'j', 'l', 'y', 'd', 'o', 'g', 'p', 'x', 'd', 'a', 'h', 'y', 'f', 'h', 'd', 'n', 'l', 'j', 's', 'h', 'g', 'j', 'e', 'p', 'r', 's', 'v', 'g', 'c', 't', 'g', 'n', 'f', 'g', 'q', 't', 'n', 'f', 's', 'q', 'i', 'z', 'o', 'n', 'i', 'r', 'd', 't', 'c', 'v', 'b', 'l', 'e', 'h', 'c', 'w', 'b', 'z', 'e', 'd', 's', 'm', 'r', 'x', 't', 'j', 's', 'i', 'p', 'k', 'y', 'x', 'k'], ['l', 't', 's', 'q', 'j', 'o', 'd', 'z', 'e', 'r', 'i', 'q', 'd', 't', 'y', 'e', 'w', 's', 'r', 'p', 'f', 's', 'c', 'o', 'z', 'b', 'y', 'r', 'p', 'i', 'd', 'a', 'd', 'v', 's', 'm', 'lyl', 'q', 'r', 'v', 'i', 'u', 'q', 'i', 'y', 'n', 'b', 's', 'c', 'g', 'm', 'h', 'u', 'l', 'k', 'v', 'dzd', 'i', 'c', 'g', 'd', 'w', 'v', 'q', 'u', 'i', 'g', 'o', 'e', 'p', 'i', 'w', 'x', 'j', 'l', 'y', 'd', 'o', 'g', 'p', 'x', 'd', 'a', 'h', 'y', 'f', 'h', 'd', 'n', 'l', 'j', 's', 'h', 'g', 'j', 'e', 'p', 'r', 's', 'v', 'g', 'c', 't', 'g', 'n', 'f', 'g', 'q', 't', 'n', 'f', 's', 'q', 'i', 'z', 'o', 'n', 'i', 'r', 'd', 't', 'c', 'v', 'b', 'l', 'e', 'h', 'c', 'w', 'b', 'z', 'e', 'd', 's', 'm', 'r', 'x', 't', 'j', 's', 'i', 'p', 'k', 'y', 'x', 'k'], ['l', 't', 's', 'q', 'j', 'o', 'd', 'z', 'e', 'r', 'i', 'q', 'd', 't', 'y', 'e', 'w', 's', 'r', 'p', 'f', 's', 'c', 'o', 'z', 'b', 'y', 'r', 'p', 'i', 'dad', 'v', 's', 'm', 'l', 'y', 'l', 'q', 'r', 'v', 'i', 'u', 'q', 'i', 'y', 'n', 'b', 's', 'c', 'g', 'm', 'h', 'u', 'l', 'k', 'v', 'd', 'z', 'd', 'i', 'c', 'g', 'd', 'w', 'v', 'q', 'u', 'i', 'g', 'o', 'e', 'p', 'i', 'w', 'x', 'j', 'l', 'y', 'd', 'o', 'g', 'p', 'x', 'd', 'a', 'h', 'y', 'f', 'h', 'd', 'n', 'l', 'j', 's', 'h', 'g', 'j', 'e', 'p', 'r', 's', 'v', 'g', 'c', 't', 'g', 'n', 'f', 'g', 'q', 't', 'n', 'f', 's', 'q', 'i', 'z', 'o', 'n', 'i', 'r', 'd', 't', 'c', 'v', 'b', 'l', 'e', 'h', 'c', 'w', 'b', 'z', 'e', 'd', 's', 'm', 'r', 'x', 't', 'j', 's', 'i', 'p', 'k', 'y', 'x', 'k'], ['l', 't', 's', 'q', 'j', 'o', 'd', 'z', 'e', 'r', 'i', 'q', 'd', 't', 'y', 'e', 'w', 's', 'r', 'p', 'f', 's', 'c', 'o', 'z', 'b', 'y', 'r', 'p', 'i', 'dad', 'v', 's', 'm', 'l', 'y', 'l', 'q', 'r', 'v', 'i', 'u', 'q', 'i', 'y', 'n', 'b', 's', 'c', 'g', 'm', 'h', 'u', 'l', 'k', 'v', 'dzd', 'i', 'c', 'g', 'd', 'w', 'v', 'q', 'u', 'i', 'g', 'o', 'e', 'p', 'i', 'w', 'x', 'j', 'l', 'y', 'd', 'o', 'g', 'p', 'x', 'd', 'a', 'h', 'y', 'f', 'h', 'd', 'n', 'l', 'j', 's', 'h', 'g', 'j', 'e', 'p', 'r', 's', 'v', 'g', 'c', 't', 'g', 'n', 'f', 'g', 'q', 't', 'n', 'f', 's', 'q', 'i', 'z', 'o', 'n', 'i', 'r', 'd', 't', 'c', 'v', 'b', 'l', 'e', 'h', 'c', 'w', 'b', 'z', 'e', 'd', 's', 'm', 'r', 'x', 't', 'j', 's', 'i', 'p', 'k', 'y', 'x', 'k'], ['l', 't', 's', 'q', 'j', 'o', 'd', 'z', 'e', 'r', 'i', 'q', 'd', 't', 'y', 'e', 'w', 's', 'r', 'p', 'f', 's', 'c', 'o', 'z', 'b', 'y', 'r', 'p', 'i', 'dad', 'v', 's', 'm', 'lyl', 'q', 'r', 'v', 'i', 'u', 'q', 'i', 'y', 'n', 'b', 's', 'c', 'g', 'm', 'h', 'u', 'l', 'k', 'v', 'd', 'z', 'd', 'i', 'c', 'g', 'd', 'w', 'v', 'q', 'u', 'i', 'g', 'o', 'e', 'p', 'i', 'w', 'x', 'j', 'l', 'y', 'd', 'o', 'g', 'p', 'x', 'd', 'a', 'h', 'y', 'f', 'h', 'd', 'n', 'l', 'j', 's', 'h', 'g', 'j', 'e', 'p', 'r', 's', 'v', 'g', 'c', 't', 'g', 'n', 'f', 'g', 'q', 't', 'n', 'f', 's', 'q', 'i', 'z', 'o', 'n', 'i', 'r', 'd', 't', 'c', 'v', 'b', 'l', 'e', 'h', 'c', 'w', 'b', 'z', 'e', 'd', 's', 'm', 'r', 'x', 't', 'j', 's', 'i', 'p', 'k', 'y', 'x', 'k'], ['l', 't', 's', 'q', 'j', 'o', 'd', 'z', 'e', 'r', 'i', 'q', 'd', 't', 'y', 'e', 'w', 's', 'r', 'p', 'f', 's', 'c', 'o', 'z', 'b', 'y', 'r', 'p', 'i', 'dad', 'v', 's', 'm', 'lyl', 'q', 'r', 'v', 'i', 'u', 'q', 'i', 'y', 'n', 'b', 's', 'c', 'g', 'm', 'h', 'u', 'l', 'k', 'v', 'dzd', 'i', 'c', 'g', 'd', 'w', 'v', 'q', 'u', 'i', 'g', 'o', 'e', 'p', 'i', 'w', 'x', 'j', 'l', 'y', 'd', 'o', 'g', 'p', 'x', 'd', 'a', 'h', 'y', 'f', 'h', 'd', 'n', 'l', 'j', 's', 'h', 'g', 'j', 'e', 'p', 'r', 's', 'v', 'g', 'c', 't', 'g', 'n', 'f', 'g', 'q', 't', 'n', 'f', 's', 'q', 'i', 'z', 'o', 'n', 'i', 'r', 'd', 't', 'c', 'v', 'b', 'l', 'e', 'h', 'c', 'w', 'b', 'z', 'e', 'd', 's', 'm', 'r', 'x', 't', 'j', 's', 'i', 'p', 'k', 'y', 'x', 'k']]),
+		("abbab", [['a', 'b', 'b', 'a', 'b'], ['a', 'b', 'bab'], ['a', 'bb', 'a', 'b'], ['abba', 'b']]),
+		("efe", [['e', 'f', 'e'], ['efe']]),
+	]
+	for case in testCase:
+		if test_module.palindromePartition(case[0]) != case[1]:
+			raise RuntimeError("testPalindromePartition failed!")
+	print "testPalindromePartition done!"
+
+def testCloneGraph():
+	for i in xrange(25):
+		g = graphic.generateRandomGraph(50 + random.randint(-15, 15))
+		node = g.getNode(0)
+		cloned = test_module.cloneGraph(node)
+		if not graphic.equal(cloned, node):
+			raise RuntimeError("testCloneGraph failed!!")
+
+	if test_module.cloneGraph(None) != None:
+		raise RuntimeError("testCloneGraph failed!!")
+
+	print "testCloneGraph done!"
+
+
+def testCanCompleteCircuit():
+	testCase = [
+		([2], [2], 0),
+		([11, 6, 7, 3, 13, 7, 5, 9, 2, 7, 15, 10, 11, 2, 11, 5, 8, 15], [3, 9, 10, 13, 8, 1, 11, 12, 12, 5, 5, 10, 6, 10, 4, 4, 6, 14], 9),
+		([4, 11, 9, 3, 10, 12, 9, 3, 14, 4, 11, 12, 12, 1, 15, 4, 8, 9], [6, 7, 11, 1, 4, 9, 6, 5, 11, 5, 15, 6, 7, 11, 13, 6, 4, 15], 1),
+		([1, 9, 2, 1, 6, 8, 5, 3, 5, 5, 13, 5, 6, 5, 11, 2, 15, 10], [4, 12, 3, 1, 13, 2, 11, 5, 8, 14, 12, 7, 1, 8, 6, 8, 15, 4], -1),
+		([13, 13, 1, 5, 5, 15, 4, 6, 10, 1, 15, 15, 8, 14, 2, 5, 11, 14], [15, 2, 14, 15, 6, 9, 8, 4, 7, 3, 11, 1, 15, 1, 6, 5, 8, 14], 5),
+		([7, 10, 2, 14, 9, 5, 6, 5, 10, 3, 13, 11, 6, 5, 2, 4, 15, 15], [13, 13, 3, 5, 8, 4, 13, 5, 2, 15, 7, 6, 7, 8, 8, 7, 15, 14], -1),
+		([14, 13, 4, 11, 9, 15, 11, 10, 3, 12, 13, 11, 4, 13, 9, 6, 15, 3], [15, 10, 4, 4, 6, 2, 7, 14, 8, 8, 8, 15, 10, 4, 7, 4, 13, 7], 1),
+		([4, 2, 11, 5, 1, 8, 10, 7, 15, 13, 3, 10, 12, 12, 5, 12, 11, 14], [6, 7, 6, 4, 1, 14, 10, 8, 12, 15, 5, 11, 5, 1, 6, 12, 12, 8], 12),
+		([14, 8, 6, 14, 15, 1, 5, 11, 14, 15, 12, 10, 9, 7, 10, 1, 6, 8], [14, 4, 5, 13, 15, 4, 15, 9, 5, 9, 14, 12, 11, 7, 10, 11, 13, 5], -1),
+		([13, 7, 10, 4, 15, 4, 5, 15, 2, 7, 1, 9, 11, 11, 1, 13, 8, 8], [4, 2, 7, 11, 11, 5, 6, 4, 8, 15, 3, 14, 6, 2, 8, 7, 3, 4], 0),
+		([15, 5, 3, 9, 1, 11, 1, 12, 9, 15, 15, 6, 9, 13, 4, 12, 9, 14], [4, 13, 7, 2, 15, 11, 3, 15, 1, 3, 3, 2, 14, 4, 10, 1, 12, 7], 8),
+		([8, 6, 2, 13, 15, 6, 15, 15, 5, 9, 14, 10, 2, 6, 2, 2, 13, 5], [12, 10, 5, 1, 6, 13, 11, 12, 7, 15, 5, 4, 14, 8, 15, 7, 1, 15], -1),
+		([6, 9, 5, 1, 13, 14, 11, 1, 3, 10, 3, 8, 5, 14, 14, 7, 14, 5], [10, 2, 1, 14, 9, 11, 12, 4, 7, 1, 4, 7, 9, 7, 1, 12, 14, 13], 9),
+		([17, 17, 2, 25, 3, 4, 10, 2, 8, 10, 2, 24, 1, 3, 2, 25, 18, 24], [13, 4, 10, 4, 13, 8, 5, 9, 14, 5, 13, 3, 9, 14, 7, 2, 12, 11], 15),
+		([25, 7, 1, 11, 21, 17, 8, 12, 1, 18, 16, 24, 10, 6, 1, 4, 24, 11], [4, 8, 10, 1, 14, 5, 11, 14, 14, 14, 10, 13, 10, 2, 1, 3, 3, 13], 0),
+		([1, 6, 23, 7, 21, 2, 19, 2, 10, 20, 20, 19, 22, 6, 22, 14, 25, 19], [4, 5, 11, 12, 12, 15, 2, 6, 15, 11, 11, 3, 12, 9, 11, 3, 12, 3], 1),
+		([13, 1, 24, 13, 20, 1, 10, 2, 9, 2, 2, 19, 13, 2, 10, 6, 2, 25], [13, 11, 4, 12, 6, 12, 13, 4, 8, 9, 14, 8, 11, 1, 14, 14, 11, 8], 17),
+	]
+
+	for case in testCase:
+		if test_module.canCompleteCircuit(case[0], case[1]) != case[2]:
+			raise RuntimeError("testCanCompleteCircuit failed!!")
+
+	print "testCanCompleteCircuit done!"
+
+def testSingleNumber():
+	testCase = [
+		([], 0),
+		([4, -15, 1, 3, 13, -7, 19, 14, 12, -9, -12, -1, 4, -15, 1, 3, 13, -7, 19, 14, 12, -12, -1], -9),
+		([-1, -11, -2, -12, 4, 5, 3, 16, 19, 9, -13, -1, -11, -2, -12, 4, 5, 3, 19, 9, -13], 16),
+		([3, 9, -8, 4, -1, 2, 11, 20, 17, 1, -9, -6, 14, -4, -11, 3, 9, -8, 4, 2, 11, 20, 17, 1, -9, -6, 14, -4, -11], -1),
+		([11, -14, -6, -10, 20, -4, -2, 13, -7, 19, -15, 11, -14, -6, -10, 20, -4, -2, -7, 19, -15], 13),
+		([-9, 2, -1, -12, 1, 12, -2, -5, 10, 8, -14, 4, -7, -3, -6, -9, 2, -1, -12, 1, 12, -5, 10, 8, -14, 4, -7, -3, -6], -2),
+		([17, 20, 18, 14, 6, 7, -4, 2, 8, 15, -7, 5, 17, 20, 18, 14, 6, 7, -4, 2, 8, -7, 5], 15),
+		([19, -2, -10, -11, -9, 5, -13, 4, 0, 13, 9, 3, 11, 8, 17, 19, -2, -10, -11, -9, 5, -13, 4, 0, 13, 3, 11, 8, 17], 9),
+		([10, 18, 9, -13, 15, 8, -8, 0, 16, 1, -11, 10, 18, 9, -13, 15, 8, 0, 16, 1, -11], -8),
+		([8, 15, -8, 2, -7, -2, -12, 18, -1, -6, -10, 16, 1, 8, 15, -8, 2, -7, -12, 18, -1, -6, -10, 16, 1], -2),
+		([0, -9, 5, -3, 15, 4, 14, -6, 19, 10, 12, 3, 7, 11, 0, -9, 5, -3, 15, 4, -6, 19, 10, 12, 3, 7, 11], 14),
+		([19, 14, 16, -1, -10, 0, -7, 20, -8, -12, -5, 12, 14, 16, -1, -10, 0, -7, 20, -8, -12, -5, 12], 19),
+		([5, -13, 10, 15, 8, 20, 13, 2, 19, 6, -14, 18, -3, -4, -1, 5, -13, 10, 8, 20, 13, 2, 19, 6, -14, 18, -3, -4, -1], 15),
+		([19, -11, 8, -2, 6, -3, -15, -4, 10, 3, -13, 9, -5, -1, 7, 19, -11, 8, 6, -3, -15, -4, 10, 3, -13, 9, -5, -1, 7], -2),
+		([11, 16, 10, -13, -7, 7, 0, -4, 8, 13, 17, -8, 12, 14, 18, 11, 16, 10, -13, -7, 7, 0, -4, 8, 13, 17, -8, 14, 18], 12),
+		([-10, 15, 13, 7, 0, -4, -1, 1, -14, 2, -11, -9, -10, 15, 13, 7, 0, -4, -1, -14, 2, -11, -9], 1),
+		([-14, -9, 5, -7, -11, 14, -15, -4, 19, -12, 20, 9, 0, -14, -9, 5, -11, 14, -15, -4, 19, -12, 20, 9, 0], -7),
+		([17, 10, -10, -12, 20, -5, -11, -1, -8, 9, 13, -13, 17, 10, -10, -12, 20, -5, -11, -1, -8, 9, -13], 13),
+		([13, -8, 20, -12, 15, -13, 0, -2, 6, 5, 9, 16, 13, 20, -12, 15, -13, 0, -2, 6, 5, 9, 16], -8),
+		([10, 8, 12, -15, 4, 5, -5, 14, 2, -14, 1, 15, -13, 10, 8, 12, -15, 4, -5, 14, 2, -14, 1, 15, -13], 5),
+		([-10, -7, 3, 19, -4, 15, 13, 0, 16, -9, 7, -1, 1, -10, -7, 3, 19, 15, 13, 0, 16, -9, 7, -1, 1], -4),
+		([6, 3, 0, 16, 13, 17, 20, 1, 19, 9, 6, 3, 0, 16, 13, 17, 1, 19, 9], 20),
+		([-12, 0, 9, 10, 20, -1, 7, 2, -4, -13, -12, 0, 9, 10, 20, -1, 7, -4, -13], 2),
+		([-2, 3, 5, -11, 2, 4, 19, -8, -14, -3, 3, 5, -11, 2, 4, 19, -8, -14, -3], -2),
+		([3, -11, -8, 0, 8, 18, 16, -5, 14, -10, -15, -4, -12, 3, -11, -8, 0, 8, 18, 16, -5, 14, -10, -15, -12], -4),
+		([8, 19, 17, -15, 18, 20, 3, -9, -10, -4, 12, 8, 19, -15, 18, 20, 3, -9, -10, -4, 12], 17),
+	]
+
+	for case in testCase:
+		if test_module.singleNumber(case[0]) != case[1]:
+			raise RuntimeError("testSingleNumber failed!!")
+
+	print "testSingleNumber done!"
+
+def testSingleNumber2():
+	testCase = [
+		([1,2,2,2], 1),
+		([1,2,2,2,3,3,3], 1),
+		([1,2,2,2,3,3,3,1], 1),
+		([2,2,2,3,3,3,1], 1),
+		([-2, -1, 10, -7, 3, -13, -15, 5, -2, -1, -7, 3, -13, -15, 5, -2, -1, -7, 3, -13, -15, 5], 10),
+		([-15, -13, -9, 7, 9, -14, 1, 3, -15, -13, -9, 7, -14, 1, 3, -15, -13, -9, 7, -14, 1, 3], 9),
+		([-12, -2, 10, -10, -8, 12, 13, 8, 6, -12, -2, 10, -10, 12, 13, 8, 6, -12, -2, 10, -10, 12, 13, 8, 6], -8),
+		([11, 4, -2, -8, -7, -10, -1, -4, 11, 4, -2, -8, -7, -10, -4, 11, 4, -2, -8, -7, -10, -4], -1),
+		([-8, 1, 7, 15, -10, -15, -11, 4, 5, -8, 1, 15, -10, -15, -11, 4, 5, -8, 1, 15, -10, -15, -11, 4, 5], 7),
+		([-1, -11, -12, -7, 13, 14, 1, -14, 5, 2, -1, -11, -12, -7, 13, 14, 1, 5, 2, -1, -11, -12, -7, 13, 14, 1, 5, 2], -14),
+		([-15, 2, -9, -11, 5, -5, 12, -14, 15, -15, 2, -11, 5, -5, 12, -14, 15, -15, 2, -11, 5, -5, 12, -14, 15], -9),
+		([13, -5, -1, -11, -13, -7, 15, 2, 13, -5, -1, -11, -13, 15, 2, 13, -5, -1, -11, -13, 15, 2], -7),
+		([7, 1, 11, -1, -12, 6, 13, 14, -2, 4, 7, 1, 11, -1, -12, 6, 13, 14, -2, 7, 1, 11, -1, -12, 6, 13, 14, -2], 4),
+		([3, 10, -11, 13, 2, 14, -15, 11, 15, 1, 10, -11, 13, 2, 14, -15, 11, 15, 1, 10, -11, 13, 2, 14, -15, 11, 15, 1], 3),
+		([-5, -14, 7, -10, 15, 10, 2, -7, 0, -5, -14, 7, -10, 15, 10, 2, -7, -5, -14, 7, -10, 15, 10, 2, -7], 0),
+		([6, 4, 11, -12, -2, -11, 13, -7, -14, 6, 4, 11, -12, -2, -11, 13, -14, 6, 4, 11, -12, -2, -11, 13, -14], -7),
+		([0, -5, 13, -13, 1, 14, 2, 4, 8, 0, -5, 13, -13, 1, 14, 2, 8, 0, -5, 13, -13, 1, 14, 2, 8], 4),
+		([3, -7, 1, -14, -1, -10, 2, 14, -6, 3, 1, -14, -1, -10, 2, 14, -6, 3, 1, -14, -1, -10, 2, 14, -6], -7),
+		([6, 12, 11, -8, 4, 14, 9, -5, -13, 6, 12, 11, -8, 14, 9, -5, -13, 6, 12, 11, -8, 14, 9, -5, -13], 4),
+		([-7, 7, -6, 0, 2, 15, -13, -9, -7, 7, -6, 0, 2, 15, -9, -7, 7, -6, 0, 2, 15, -9], -13),
+		([-2, 1, -11, 0, -13, -15, 12, -9, -2, 1, -11, -13, -15, 12, -9, -2, 1, -11, -13, -15, 12, -9], 0),
+		([-7, 1, 11, 15, -4, 5, -13, -9, -5, 1, 11, 15, -4, 5, -13, -9, -5, 1, 11, 15, -4, 5, -13, -9, -5], -7),
+		([-6, 4, -7, -4, -9, 10, 7, -14, 2, -6, 4, -7, -4, 10, 7, -14, 2, -6, 4, -7, -4, 10, 7, -14, 2], -9),
+		([-1, -5, -11, -10, 2, 14, -8, 8, 0, 11, -1, -5, -10, 2, 14, -8, 8, 0, 11, -1, -5, -10, 2, 14, -8, 8, 0, 11], -11),
+		([-6, -10, -15, -13, 14, 11, -11, -4, -6, -10, -15, -13, 14, -11, -4, -6, -10, -15, -13, 14, -11, -4], 11),
+		([7, -5, 2, -8, -15, -10, -14, -4, -7, 4, -5, 2, -8, -15, -10, -14, -4, -7, 4, -5, 2, -8, -15, -10, -14, -4, -7, 4], 7),
+		([0, 5, 3, 14, -7, 1, -9, -5, -10, 0, 5, 3, -7, 1, -9, -5, -10, 0, 5, 3, -7, 1, -9, -5, -10], 14),
+		([-8, 2, 12, 8, 4, -14, 7, -4, 1, -1, -8, 2, 12, 8, 4, -14, 7, 1, -1, -8, 2, 12, 8, 4, -14, 7, 1, -1], -4),
+		([-12, -3, 1, 9, 3, 10, -13, 0, 8, -12, -3, 1, 9, 3, 10, -13, 0, -12, -3, 1, 9, 3, 10, -13, 0], 8),
+	]
+
+	for case in testCase:
+		if test_module.singleNumber2(case[0]) != case[1]:
+			raise RuntimeError("testSingleNumber2 failed!!")
+
+	print "testSingleNumber2 done!"
+
+
+def testWordBreak():
+	testCase = [
+		("leetcode", ["leet", "code"], True),
+		("a", ["a"], True),
+		("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab", ["a","aa","aaa","aaaa","aaaaa","aaaaaa","aaaaaaa","aaaaaaaa","aaaaaaaaa","aaaaaaaaaa"], False),
+		("xnlxnlfvzztztgdkowgdkowgagqwnxugzwxugzwxnlgdkowgdkowgagqwnfvzztzt", ['fvz', 'aru', 'xnl', 'ztzt', 'gagqwn', 'xugzw', 'gdkow', 'xugzwxnl', 'gdkowgagqwn', 'xnlaru', 'xugzwxnlxnlaru', 'gdkowgdkowgagqwn'], True),
+		("ixgxejmcrdqjkfmcalrxejmcrjxnfyqcwwtcalrxejmcrcalrjxnfyqcwwtxejmcrdqjkfmdqjkfmcalrxejmcrjxnflwccpcalrxejmr", ['dqjkfm', 'lwccp', 'yqcwwt', 'calr', 'jxnf', 'xejmcr', 'ixg', 'xejmcrdqjkfm', 'jxnfyqcwwt', 'calrxejmcr', 'dqjkfmcalr', 'dqjkfmcalrxejmcr'], False),
+		("vncwjlaojlaovncwynwhazjlaojlaovncwmtqggjlaoeurhjmjlaovncweurhjmjlaovncwvncwjlajlaovncwvncw", ['mtqgg', 'iucnk', 'jlao', 'ynwhaz', 'eurhjm', 'vncw', 'suae', 'iucnkmtqgg', 'jlaovncw', 'jlaojlaovncw', 'jlaovncwvncw', 'eurhjmjlaovncwvncw'], False),
+		("pphfwymlyymlysxufoopphfwpphfwymlyjykfejykfepphfwzpupphfwymlyymlybgoqvpphfwymlypphfwbgoqvpphfwymly", ['zpu', 'uodqp', 'pphfw', 'jykfe', 'bgoqv', 'sxufoo', 'ymly', 'pphfwjykfe', 'ymlysxufoo', 'jykfepphfw', 'pphfwymly', 'bgoqvpphfwymly'], True),
+		("tluxafiebjglillshpbdztluxatluxapbdzjglillshfieblshzgcwfieblshzcwfiebpbdzndvnlsh", ['jglil', 'lsh', 'fieb', 'zgcw', 'pbdz', 'tluxa', 'ndvn', 'zgcwfieb', 'pbdzndvn', 'lshzgcwfieb', 'tluxapbdz', 'jglillsh'], False),
+		("ijvgqsblbxyyifwmijvgqsjffijvgqsblbxyqlpxrlndqlpxryifwmijvgqsjffijvgqsblbxyijvgqsblbxylnd", ['ijvgqs', 'yifwm', 'qlpxr', 'lnd', 'blbxy', 'bsy', 'jff', 'ijvgqsjff', 'blbxyijvgqs', 'blbxylnd', 'ijvgqsblbxy', 'yifwmijvgqs'], True),
+		("ivawzsiuivawzsiuivawivawvtiivawvtinkxivawzsiuzmildukallivawvtizmildnuegwzmildukallzmildukallivawvti", ['zsiu', 'ukall', 'zmild', 'vti', 'nuegw', 'ivaw', 'nkx', 'ivawzsiu', 'zmildukall', 'nkxivawzsiu', 'ivawvti', 'ivawzsiuivaw'], True),
+		("vbqbesqgsqgpsqsfpcencenqrgvbqbepsqsfpsqgepoxsqgpsqsfpsqgpsqsfppsqsfpcen", ['qrg', 'psqsfp', 'cen', 'epox', 'vbqbe', 'rdop', 'sqg', 'sqgrdop', 'psqsfpsqg', 'sqgpsqsfp', 'epoxsqgpsqsfp', 'sqgsqgrdop'], True),
+		("jbpubdzluelhrzijbprbsdrbsdjbpjbpjobjbpjbpjobjbpjobrbsdjbpzptmpmelhrzizptmpm", ['ubdzlu', 'job', 'efiucg', 'elhrzi', 'jbp', 'rbsd', 'zptmpm', 'ubdzluelhrzi', 'jbpjob', 'ubdzlurbsd', 'rbsdjbp', 'jbpubdzluelhrzi'], True),
+		("zsiibrtxhthtkxdxmcxqnggjmivazxmcxqzsiibrtxhaieyumivazzsiibrtxhnggjnggjzsiibrtxhaieyuzsiibrtxhaieyuthtkxd", ['thtkxd', 'ibrtxh', 'aieyu', 'mivaz', 'xmcxq', 'nggj', 'zsi', 'zsiaieyu', 'mivazxmcxq', 'zsiibrtxh', 'zsiibrtxhaieyu', 'zsiibrtxhnggj'], True),
+		("mjchmzwdffzmmcdkzmjchmzwdqxpobycdkzcdkzffzmmcdkzopzjlyqtgmjchmzwdqxpobyzwdzwdlyqtg", ['opzj', 'lyqtg', 'cdkz', 'mjchm', 'qxpoby', 'ffzmm', 'zwd', 'cdkzopzj', 'ffzmmcdkz', 'mjchmzwd', 'ffzmmcdkzopzj', 'lyqtgmjchmzwd'], True),
+		("hatuopvhedoqhatuopvhedoqzzlqeczzlqecvrbxzzlqecvrbxtvhauavrbxzzlqeczzlqecbms", ['hatuop', 'vhedoq', 'bms', 'akvo', 'zzlqec', 'vrbx', 'tvhaua', 'zzlqectvhaua', 'vrbxzzlqec', 'akvohatuop', 'zzlqectvhauaakvohatuop', 'tvhauaakvo'], True),
+		("jcrfdoejcrfjcrfdoejcrfrzaiwncflbljcrfdoedoedoenwrttgjcrfdoejcrfdoejcrfwncfjcrfdoejcrfjcrfdoe", ['lbl', 'doe', 'antdqp', 'rzai', 'nwrttg', 'wncf', 'jcrf', 'jcrfdoe', 'jcrfdoejcrf', 'rzaiwncf', 'lbljcrfdoe', 'jcrfdoejcrfrzaiwncf'], True),
+		("zgafginppylrysbzgafgirysbqkwsacjlosrysbzgafgidkcmmlptearysbzgafgimlpteazgafginppylrysbzgafgidkcmzgafgi", ['zgafgi', 'nppyl', 'jlos', 'dkcm', 'qkwsac', 'rysb', 'mlptea', 'rysbzgafgi', 'nppylrysbzgafgi', 'mlptearysbzgafgi', 'zgafginppylrysbzgafgi', 'jlosrysb'], True),
+		("uhqjqeuteutuhqjqqysmfeuhqjqubgquhqjqubguhqjqeuteuticyaubgqeuteoqtlnwcqysmfeuhqjqeut", ['lnwc', 'eoqt', 'uhqjq', 'eut', 'icya', 'ubgq', 'qysmfe', 'euteoqt', 'uhqjqubgq', 'qysmfeeoqt', 'uhqjqeut', 'uhqjqeuteut'], False),
+		("otlotmzcscbfysbfysotloapaqncschslmcschslmotlotmztmzhslmotlotmz", ['utue', 'csc', 'hslm', 'apaqn', 'tmz', 'otlo', 'bfys', 'tmzhslm', 'otlotmz', 'cscbfys', 'hslmcsc', 'tmzcscbfys'], True),
+		("sexjjhltsebdsexjjhgdjqshhtwrilzjsuhoshhtwrilzjsuhoshhtwrilzjsuhoshhtwrilzshhtwrilzjsuhowrilzsexjjhltsebdsexjjhshhtwrilzjsuhoshhtwrilz", ['sexjjh', 'jsuho', 'rqzm', 'gdjq', 'shht', 'wrilz', 'ltsebd', 'ltsebdsexjjh', 'shhtwrilz', 'shhtwrilzjsuho', 'shhtwrilzjsuhoshht', 'shhtwrilzjsuhoshhtwrilz'], True),
+		("uklfwhvpfuklfwhedulkcrdwkrapqapqvpfyddpcuklfwhyddpcsruuimuklfwhyddpcsruuim", ['sruuim', 'edulkc', 'rdwkr', 'yddpc', 'apq', 'vpf', 'uklfwh', 'yddpcvpf', 'uklfwhapq', 'yddpcsruuim', 'vpfyddpc', 'uklfwhyddpcsruuim'], True),
+		("oyllqclljzjjkcitpoyllqclljzjtxxwqyymlljzjkixboyllqcwqyymoyllqclljzjjszuwkixbwqyymkixb", ['jkcitp', 'jszuw', 'txx', 'oyllqc', 'lljzj', 'wqyym', 'kixb', 'wqyymlljzj', 'wqyymlljzjkixb', 'jkcitpkixb', 'oyllqclljzj', 'txxjkcitp'], True),
+		("bvwrmilbvwrmilnlzifgasvkjasvkjrmilifgrmilasvkjrmilifgbvwrmilnlzbvwrmilifgasvkjrmil", ['nlz', 'rmil', 'bvw', 'ifg', 'uahv', 'asvkj', 'xcynol', 'asvkjrmil', 'bvwrmil', 'ifgasvkjrmil', 'bvwrmil', 'asvkjrmilifg'], True),
+		("djmdjmmgopmgopjwqqwbmgopdjmdjmmgopmgopdjmmgopfiykvbhwfdjmbhwfdjmmgopdjmmgopmgop", ['hbxjdl', 'jwqqwb', 'fiykv', 'mgop', 'djm', 'bhwf', 'usrt', 'fiykvbhwf', 'djmmgop', 'djmmgopmgop', 'fiykvbhwfbhwf', 'djmmgopmgopjwqqwb'], True),
+		("zanpijvtazanpijkpgeykkpgeyktsnpfkpgeyktsnpfekopznqkayvfkpgeyktsnpfekopznkpgeyktsnpfekopznkpgeyktsnpfkpgeyktsnpfekopznqkayvf", ['qkayvf', 'zanpij', 'ekopzn', 'tsnpf', 'kpgeyk', 'coyd', 'vta', 'ekopznqkayvf', 'qkayvfcoyd', 'qkayvfcoyd', 'kpgeyktsnpf', 'kpgeyktsnpfekopzn'], True),
+		("bessrjplsfrjplsfrjplsfvxvbtrjplsfspjdpsrspjddanspjdpsrspjddanspjdpsrspjdspjdpsrspjddanspjdpsrspjdpsrpsrspjddan", ['bess', 'rjplsf', 'spjd', 'vxvbt', 'dan', 'nlawzd', 'psr', 'psrspjd', 'bessrjplsf', 'spjdpsrspjd', 'danspjdpsrspjd', 'psrpsrspjd'], True),
+		("ajjxfdhikugjpvrlvbekybfdhikugjpvrngjpvrnajjxajjxpwsmfdhikugjpvrngjpvrnajjxajjxgjpvrnajjxajjxgjpvrnajjxajjx", ['pwsm', 'gjpvrn', 'afvxrf', 'fdhiku', 'kyb', 'ajjx', 'lvbe', 'gjpvrnajjx', 'fdhikugjpvrn', 'fdhikugjpvrnlvbe', 'gjpvrnajjxajjx', 'gjpvrnfdhikugjpvrnlvbe'], False),
+		("vtvywjxhbmcsheefnbqkonwvtvefnnldplfbqkonwqvlgyqvlgyqvlgyefnvtvqvlgy", ['vtv', 'efn', 'ywjxh', 'nldplf', 'bqkonw', 'qvlgy', 'bmcshe', 'nldplfbqkonw', 'efnnldplfbqkonw', 'bmcsheefn', 'nldplfbqkonwbmcsheefn', 'bmcsheefnywjxh'], True),
+	]
+
+	for case in testCase:
+		if test_module.wordBreak(case[0], case[1]) != case[2]:
+			raise RuntimeError("testWordBreak failed!!")
+
+	print "testWordBreak done!"
+
+def testHasCycle():
+	testCase = [
+		([], False),
+		([1], False),
+	]
+
+	for case in testCase:
+		linkedLst = linked_list.createLinkedLst(case[0])
+		if test_module.hasCycle(linkedLst) != case[1]:
+			raise RuntimeError("testHasCycle failed!!")
+
+	for i in xrange(100):
+		size = 15 + random.randint(0,5)
+		lst = []
+		while len(lst) < size:
+			val = random.randint(0,33)
+			if val not in lst:
+				lst.append(val)
+
+		linkedLst = linked_list.createLinkedLst(lst)
+		cycle = False
+		if random.randint(1,2) == 1:
+			idx = random.randint(1,size)
+			th = linkedLst
+			node = th
+			while th and th.next:
+				if idx == 1:
+					node = th
+				idx -= 1
+				th = th.next
+			th.next = node
+			cycle = True
+
+		if test_module.hasCycle(linkedLst) != cycle:
+			raise RuntimeError("testHasCycle failed!!")
+
+	print "testHasCycle done!"
+
 
 
 
@@ -1150,16 +1980,49 @@ tests = [
 	# (testMinPathSum, "#Tag: Array, Dynamic Programming\ndef minPathSum(grid):"),
 	# (testMySqrt, "#Tag: Math, Binary Search\ndef mySqrt(x):\n\n\ndef mySqrt2(x):"),
 
-	(testSetZeroes, "#tag: Array\ndef setZeroes(matrix):"), 
-	(testSearchMatrix, "#Tad: Binary Search, Array\ndef searchMatrix(matrix, target):"),
-	(testSortColors, "#Tag: Array, Two Pointers, Sort\ndef sortColors(nums):\n\n\ndef sortColors2(nums):"),
-	(testNumCombine, "#Tag: Backtracking\ndef numCombine(n, k):"),
-	(testSubsets, "#Tag: Array, Backtracking, Bit Manipulation\ndef subsets(nums):"),
-	(testWordSearch, "#Tag:  Array, Backtracking\ndef wordSearch(board, word):"),
-	(testRemoveDuplicates2, "#tag: Array, Two Pointers\ndef removeDuplicates2(nums):"), 
-	(testSearchInRotatedSortedArray, "#Tag: Array, Binary Search\ndef searchInRotatedSortedArray(nums, target):"),
-	(testDeleteDuplicatesSL2, "#Remove Duplicates from Sorted List II \ndef deleteDuplicates(head):\n\n\ndef deleteDuplicates2(head):"),
-	(testPartitionList, "#Tag: Linked List, Two Pointers\ndef partitionList(head, x):")
+	# (testSetZeroes, "#tag: Array\ndef setZeroes(matrix):"), 
+	# (testSearchMatrix, "#Tad: Binary Search, Array\ndef searchMatrix(matrix, target):"),
+	# (testSortColors, "#Tag: Array, Two Pointers, Sort\ndef sortColors(nums):\n\n\ndef sortColors2(nums):"),
+	# (testNumCombine, "#Tag: Backtracking\ndef numCombine(n, k):\n\n\ndef numCombine2(n, k):"),
+	# (testSubsets, "#Tag: Array, Backtracking, Bit Manipulation\ndef subsets(nums):\n\n\ndef subsets2(nums):"),
+	# (testWordSearch, "#Tag:  Array, Backtracking\ndef wordSearch(board, word):"),
+	# (testRemoveDuplicates2, "#tag: Array, Two Pointers\ndef removeDuplicates2(nums):"), 
+	# (testSearchInRotatedSortedArray, "#Tag: Array, Binary Search\ndef searchInRotatedSortedArray(nums, target):"),
+	# (testDeleteDuplicatesSL2, "#Remove Duplicates from Sorted List II \ndef deleteDuplicates(head):\n\n\ndef deleteDuplicates2(head):"),
+	# (testPartitionList, "#Tag: Linked List, Two Pointers\ndef partitionList(head, x):"),
+
+	# (testGrayCode, "#Tag: Backtracking\ndef grayCode(n):\n\n\ndef grayCode2(n):"),
+	# (testNumDecodings, "#Dynamic Programming, String\ndef numDecodings(s):"),
+	# (testSubsetsWithDup, "#Array, Backtracking\ndef subsetsWithDup(nums):"),
+	# (testReverseBetween, "#Tag: Linked list\ndef reverseBetween(head, m, n):"),
+	# (testRestoreIpAddresses, "#Tag: Backtracking, String\ndef restoreIpAddresses(s):"),
+	# (testInorderTraversal, "#Tag: Tree, Hash Table, Stack\ndef inorderTraversal(root):\n\n\ndef inorderTraversal2(root):"),
+	# (testNumTrees, '#Tree, Dynamic Programming\ndef numTrees(n):'),
+	# (testGenerateTrees, "#Tree, Dynamic Programming\ndef generateTrees(n):"),
+	# (testIsValidBST, "# Tree, Depth-first Search\ndef isValidBST(root):"),
+	# (testZigzagLevelOrder, "#Tag: Tree, Breadth-first Search, Stack\ndef zigzagLevelOrder(root):"),
+
+	# (testBuildTreeFromPreIn, "#Tag: Tree, Array, Depth-first Search\ndef buildTreeFromPreIn(preorder, inorder):"),
+	# (testBuildTreeFromPostIn, "#Tag: Tree, Array, Depth-first Search\ndef buildTreeFromPostIn(postorder, inorder):"),
+	# (testSortedArrayToBST, "#Tag:Tree, Depth-first Search\ndef sortedArrayToBST(nums):"),
+	# (testSortedListToBST, "#Tag: Depth-first Search, Linked List\ndef sortedListToBST(head):"),
+	# (testFlatten, "#Tag: Tree, Depth-first Search\ndef flatten(root):\n\n\ndef flatten2(root):"),
+	# (testPathSum, "#Tag: Tree, Depth-first Search\ndef pathSum(root, sum):"),
+	# (testConnectTree, "#Tag: Tree, Depth-first Search\ndef connectTree(root):"), 
+	# (testMinimumTotal, "#Array, Dynamic Programming\ndef minimumTotal(triangle):"),
+	# (testMaxProfit, "#Tag: Array, Dynamic Programming\ndef maxProfit(prices):"),
+	# (testMaxProfit2, "#Tag: Array, Greedy\ndef maxProfit2(prices):"),
+
+	(testSumNumbers, "#Tag: Tree, Depth-first Search\ndef sumNumbers(root):"),
+	(testWordLadder, "def wordLadder(beginWord, endWord, wordList):"),
+	(testSurroundedRegons, "#Tag:Breadth-first Search, Union Find\ndef surroundedRegons(self, board):"),
+	(testPalindromePartition, "#Tag:Backtracking\ndef palindromePartition(s):"),
+	(testCloneGraph, "#Tag:Depth-first Search, Breadth-first Search, Graph\ndef cloneGraph(node):"),
+	(testCanCompleteCircuit, "#tag: Greedy\ndef canCompleteCircuit(gas, cost):"),
+	(testSingleNumber, "#Tag: Hash Table, Bit Manipulation/ndef singleNumber(nums):"),
+	(testSingleNumber2, "#Tag:Bit Manipulation\ndef singleNumber2(nums):"),
+	(testWordBreak, "#Tag: Dynamic Programming\ndef wordBreak(s, wordDict):"),
+	(testHasCycle, "#Tag:Linked List, Two Pointers\ndef hasCycle(head):"),
 ]	
 
 import os

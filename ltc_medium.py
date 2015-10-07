@@ -636,7 +636,7 @@ def setZeroes(matrix):
                 matrix[i][0] = matrix[0][j] = 0
 
     for i in xrange(len(matrix)-1, -1, -1):
-        for j in xrange(len(matrix[i])-1, 0, -1):
+        for j in xrange(1, len(matrix[i])):
             if matrix[0][j] == 0 or matrix[i][0] == 0:
                 matrix[i][j] = 0
         if mark:
@@ -714,7 +714,7 @@ def numCombine2(n, k):
    
 #Subsets
 #Tag: Array, Backtracking, Bit Manipulation
-def subsets2(nums):
+def subsets(nums):
     nums.sort()
     ret = []
     for n in nums:
@@ -725,7 +725,7 @@ def subsets2(nums):
     return ret
 
 #https://leetcode.com/discuss/46668/recursive-iterative-manipulation-solutions-explanations
-def subsets(nums):
+def subsets2(nums):
     nums.sort()
     num_subset = 1 << len(nums)
     res = [[] for x in xrange(0, num_subset)]
@@ -840,3 +840,500 @@ def partitionList(head, x):
     pt2.next = None
     pt1.next = lst2.next
     return lst1.next
+
+#Gray Code
+#Tag: Backtracking
+def grayCode(n):
+    ret = [0]
+    for i in xrange(0, n):
+        ret += [ (1 << i) + x for x in ret[::-1]]
+    return ret
+
+def grayCode2(n):
+    ret = []
+    for i in xrange(0, 1 << n):
+        ret.append(i ^ (i/2))
+    return ret
+   
+
+#Subsets II 
+#Array, Backtracking
+def subsetsWithDup(nums):
+    nums.sort()
+    ret = [[]]
+    cnt = size = 0
+    for i in xrange(len(nums)):
+        n = nums[i]
+        cnt = size if i > 0 and nums[i-1] == nums[i] else 0
+        size = len(ret)
+        ret += [ret[i] + [n] for i in xrange(cnt, len(ret))]
+    return ret
+
+#Decode Ways
+#Dynamic Programming, String
+def numDecodings(s):
+    if not s:
+        return 0
+    dp = [0] * len(s) + [1]
+    dp[-2] = 1 if 0 < int(s[-1]) <= 26 else 0
+    for i in xrange(len(s)-2, -1, -1):
+        if s[i] == '0':
+            continue
+        if 0 < int(s[i:i+2]) <= 26:
+            dp[i] += dp[i+2]
+        
+        dp[i] += dp[i+1]
+        
+    return dp[0]
+
+#Reverse Linked List II 
+#Tag: Linked list
+def reverseBetween(head, m, n):
+    dummy = pt = linked_list.Node(-1)
+    pt.next = head
+
+    for i in xrange(1, m):
+        pt = pt.next
+
+    n -= m
+    temp = pt.next
+    for i in xrange(n):
+        x = temp.next
+        temp.next, x.next, pt.next = x.next, pt.next, x
+
+    return dummy.next
+
+#Restore IP Addresses
+#Tag: Backtracking, String
+def restoreIpAddresses(s):
+    def restore(s, ret, temp, cnt):
+        if cnt == 4 and len(temp) == 4 and len(s) == 0:
+            ret.append(".".join(temp))
+            return ret
+        for j in xrange(1, 4):
+            if j > len(s) or (s[0] == '0' and j > 1) or int(s[:j]) > 255:
+                return ret
+            restore(s[j:], ret, temp + [s[:j]], cnt + 1)
+        return ret
+        
+    if len(s) < 4 or  len(s) > 12:
+        return []
+    return restore(s, [], [], 0)
+
+#Binary Tree Inorder Traversal
+#Tag: Tree, Hash Table, Stack
+def inorderTraversal(root):
+    ret = []
+    stack = []
+    while root:
+        stack.append(root)
+        root = root.left
+        
+    while stack:
+        node = stack.pop()
+        temp = node.right
+        while temp:
+            stack.append(temp)
+            temp = temp.left
+        ret.append(node.val)
+    return ret
+
+def inorderTraversal2(root):
+    ret = []
+    while root:
+        if root.left:
+            temp = root.left
+            while temp and temp.right and temp.right != root:
+                temp = temp.right
+            if temp.right == None:
+                temp.right = root
+                root = root.left
+                continue
+            else:
+                temp.right = None
+        ret.append(root.val)
+        root = root.right
+    return ret
+
+
+#Unique Binary Search Trees
+#Tree, Dynamic Programming
+def numTrees(n):
+    dp = [0] * (n + 1)
+    dp[0] = dp[1] = 1
+    for i in xrange(2, n+1):
+        for j in xrange(1, i+1):
+            dp[i] += dp[j-1] * dp[i-j]
+    
+    return dp[n]
+
+#Unique Binary Search Trees II
+#Tree, Dynamic Programming
+import binary_tree
+def generateTrees(n):
+    def generateSubtree(s, e):
+        if s >= e:
+            return [None]
+        ret = []
+        for i in xrange(s, e):
+            left = generateSubtree(s, i)
+            right = generateSubtree(i+1, e)
+            for l in left:
+                for r in right:
+                    node = binary_tree.Node(i)
+                    node.left = l
+                    node.right = r
+                    ret.append(node)
+        
+        return ret
+    return generateSubtree(1, n+1)
+
+#Validate Binary Search Tree
+# Tree, Depth-first Search
+def isValidBST(root):
+    prev = None
+    while root:
+        if root.left:
+            temp = root.left
+            while temp and temp.right != None and temp.right != root:
+                temp = temp.right
+            if temp.right == None:
+                temp.right = root
+                root = root.left
+                continue
+        if prev != None and prev >= root.val:
+            return False
+        prev = root.val
+        root = root.right
+            
+    return True
+
+#Binary Tree Zigzag Level Order Traversal
+#Tag: Tree, Breadth-first Search, Stack
+def zigzagLevelOrder(root):
+    if root == None:
+        return []
+
+    ret = []
+    queue = [root]
+    flip = False
+    while queue:
+        size = len(queue)
+        row = [0] * size
+        for i in xrange(size):
+            node, queue = queue[0], queue[1:]
+            idx = i if not flip else size - i - 1
+            row[idx] = node.val
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        ret.append(row)
+        flip = not flip
+
+    return ret
+
+#Construct Binary Tree from Preorder and Inorder Traversal
+#Tag: Tree, Array, Depth-first Search
+def buildTreeFromPreIn(preorder, inorder):
+    root = binary_tree.Node(preorder.pop(0))
+    stack = [root]
+    prev = None
+    while preorder:
+        if stack and stack[-1].val == inorder[0]:
+            inorder.pop(0)
+            prev = stack.pop()
+        elif prev:
+            prev.right = binary_tree.Node(preorder.pop(0))
+            stack.append(prev.right)
+            prev = None
+        else:
+            newNode = binary_tree.Node(preorder.pop(0))
+            if stack:
+                stack[-1].left = newNode
+            stack.append(newNode)
+
+    return root
+
+#Construct Binary Tree from Inorder and Postorder Traversal
+#Tag: Tree, Array, Depth-first Search
+def buildTreeFromPostIn(postorder, inorder):
+    if not inorder:
+        return None
+
+    idx = inorder.index(postorder.pop())
+    node = binary_tree.Node(inorder[idx])
+    node.right = buildTreeFromPostIn(postorder, inorder[idx+1:])
+    node.left = buildTreeFromPostIn(postorder, inorder[:idx])
+    return node
+
+#Convert Sorted Array to Binary Search Tree
+#Tag:Tree, Depth-first Search
+def sortedArrayToBST(nums):
+    if not nums:
+        return None
+        
+    mid = (len(nums)-1)/2
+    node = binary_tree.Node(nums[mid])
+    node.left = sortedArrayToBST(nums[:mid])
+    node.right = sortedArrayToBST(nums[mid+1:])
+    
+    return node
+
+#Convert Sorted List to Binary Search Tree
+#Tag: Depth-first Search, Linked List
+def sortedListToBST(head):
+    def buildTree(wrapper, lo, hi ):
+        if hi - lo < 1:
+            return None
+        mid = lo + (hi - lo - 1)/2
+        leftNode = buildTree(wrapper, lo, mid)
+        thisNode = binary_tree.Node(wrapper[0].val)
+        wrapper[0] = wrapper[0].next
+        rightNode = buildTree(wrapper, mid+1, hi)
+        thisNode.left = leftNode
+        thisNode.right = rightNode
+        
+        return thisNode
+        
+    size = 0
+    th = head
+    while th:
+        th = th.next
+        size += 1
+        
+    return buildTree([head], 0, size)
+
+#Flatten Binary Tree to Linked List
+#Tag: Tree, Depth-first Search 
+def flatten(root):
+    th = root
+    while th:
+        if th.left:
+            temp = th.left
+            while temp.right:
+                temp = temp.right
+            temp.right = th.right
+            th.right = th.left
+            th.left = None
+        th = th.right
+
+def flatten2(root):
+    def imp(root, prev):
+        if(root==None):
+            return prev
+        prev=imp(root.right,prev)  
+        prev=imp(root.left,prev)
+        root.right=prev
+        root.left=None
+        return root
+    return imp(root, None)
+
+#Path Sum II
+#Tag: Tree, Depth-first Search
+def pathSum(root, sum):
+    def collect(root, ret, temp, val):
+        if root == None:
+            return ret
+            
+        val -= root.val
+        if val == 0 and root.left == None and root.right == None:
+            ret.append(temp + [root.val])
+            return ret
+        
+        collect(root.left, ret, temp + [root.val], val)
+        collect(root.right, ret, temp + [root.val], val)
+            
+        return ret
+        
+    return collect(root, [], [], sum)
+
+
+#Populating Next Right Pointers in Each Node
+#Tag: Tree, Depth-first Search
+def connectTree(root):
+    if not root:
+        return
+    
+    tRoot = root
+    dummy = pt = binary_tree.TreeLinkNode(-1)
+    while tRoot:
+        if tRoot.left:
+            pt.next = tRoot.left
+            pt = pt.next
+        if tRoot.right:
+            pt.next = tRoot.right
+            pt = pt.next
+
+        tRoot = tRoot.next
+        if tRoot == None:
+            tRoot = dummy.next
+            dummy = pt = binary_tree.TreeLinkNode(-1)
+
+#Triangle
+#Array, Dynamic Programming
+def minimumTotal(triangle):
+    if not triangle:
+        return 0
+    dp = triangle[-1]
+    for i in xrange(len(triangle)-2, -1, -1):
+        row = triangle[i]
+        for j in xrange(0, len(row)):
+            dp[j] = row[j] + min(dp[j], dp[j+1])
+            
+    return dp[0]
+
+#Best Time to Buy and Sell Stock
+#Tag: Array, Dynamic Programming
+def maxProfit(prices):
+    if len(prices) <= 1:
+        return 0
+        
+    ret = sumVal = 0
+    for i in xrange(1, len(prices)):
+        sumVal = max(0, sumVal + (prices[i]-prices[i-1]))
+        ret = max(ret, sumVal)
+    return ret
+
+#Best Time to Buy and Sell Stock II
+#Tag: Array, Greedy
+def maxProfit2(prices):
+    if len(prices) <= 1:
+        return 0
+        
+    maxVal = 0
+    for i in xrange(1, len(prices)):
+        diff = max(0, prices[i] - prices[i-1])
+        maxVal += diff
+        
+    return maxVal
+
+#Sum Root to Leaf Numbers
+#Tag: Tree, Depth-first Search
+def sumNumbers(root):
+    def calc(root, val):
+        if root == None:
+            return 0
+        val = val * 10 + root.val
+        if root.left == None and root.right == None:
+            return val
+        return calc(root.left, val) + calc(root.right, val)
+    return calc(root, 0)
+
+#Word Ladder
+def wordLadder(beginWord, endWord, wordList):
+    front = set([beginWord])
+    back = set([endWord])
+    wordList = set(wordList)
+    wordList.discard(beginWord)
+    length = 2
+    while front:
+        front = wordList & set(word[:idx] + c + word[idx+1:] for word in front for idx in xrange(len(word)) for c in 'abcdefghijklmnopqrstuvwxyz')
+        if front & back:
+            return length
+        length += 1
+        if len(front) > len(back):
+            front, back = back, front
+        wordList -= front
+        
+    return 0
+
+#Surrounded Regions
+#Tag:Breadth-first Search, Union Find
+def surroundedRegons(board):
+    if not any(board):
+        return
+    m, n = len(board), len(board[0])
+    queue = [ij for k in range(m+n) for ij in ((0, k), (m-1, k), (k, 0), (k, n-1))]
+    while queue:
+        x,y = queue.pop()
+        if not(0 <= x < m and 0 <= y < n and board[x][y] == 'O'):
+            continue
+        board[x][y] = 'M'
+        queue += [(x+1, y), (x-1, y), (x, y-1), (x, y+1)]
+        
+
+    board[:] = [['XO'[c == 'M'] for c in row] for row in board] 
+
+#Palindrome Partitioning
+#Tag:Backtracking
+def palindromePartition(s):
+    def imp(s, mp):
+        if not mp.has_key(s):
+            ret = [[s[:i]] + item for i in xrange(1, len(s)+1) for item in imp(s[i:], mp) if s[:i] == s[i-1::-1]]
+            mp[s] = ret if ret else [[]]
+        return mp[s]
+    return imp(s, {})
+
+#Clone Graph
+#Tag:Depth-first Search, Breadth-first Search, Graph
+import graphic
+def cloneGraph(node):
+    def clone(node, mp):
+        if node == None:
+            return None
+        if not mp.has_key(node.val):
+            c = graphic.UndirectedGraphNode(node.val)
+            mp[node.val] = c
+            for neighbor in node.adj:
+                c.adj.append(clone(neighbor, mp))
+        return mp[node.val]
+    
+    return clone(node, {})
+
+#Gas Station
+#tag: Greedy
+def canCompleteCircuit(gas, cost):
+    total = sumVal = start = 0
+    for i in xrange(len(gas)):
+        total += gas[i] - cost[i]
+        sumVal += gas[i] - cost[i]
+        if sumVal < 0:
+            start = i + 1
+            sumVal = 0
+            
+    return start if total >= 0 else -1
+
+#Single Number
+#Tag: Hash Table, Bit Manipulation
+def singleNumber(nums):
+    ret = 0
+    for n in nums:
+        ret ^= n
+    return ret
+
+#Single Number II
+#Tag:Bit Manipulation
+def singleNumber2(nums):
+    ret = 0
+    ep1 = ep2 = ep3 = 0
+    for n in nums:
+        ep3 = (ep3 ^ n) & ep2 & ep1
+        ep2 = (ep2 ^ n) & ep1
+        ep1 = (ep1 | n) & ~ep3
+    return ep1
+
+#Word Break
+#Tag: Dynamic Programming
+def wordBreak(s, wordDict):
+    dp = [0] * (len(s) + 1)
+    dp[0] = 1
+    for i in xrange(len(s)):
+        for j in xrange(i, -1, -1):
+            if s[j:i+1] in wordDict and dp[j] == 1:
+                dp[i+1] = 1
+                break
+            
+    return dp[-1] == 1
+
+#Linked List Cycle
+#Tag:Linked List, Two Pointers
+def hasCycle(head):
+    p1, p2 = head, head
+    while p2 and p2.next:
+        p2 = p2.next.next
+        p1 = p1.next
+        if p1 == p2:
+            return True
+        
+    return False 
