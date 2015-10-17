@@ -3,6 +3,7 @@ import random
 import graphic
 import binary_tree
 import linked_list
+import time
 
 test_module = None
 def randomString(size):
@@ -1867,7 +1868,7 @@ def testSingleNumber2():
 def testWordBreak():
 	testCase = [
 		("leetcode", ["leet", "code"], True),
-		("a", ["a"], True),
+		("a", ["a"], True), ("", ["a"], False), ("", [], True),
 		("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab", ["a","aa","aaa","aaaa","aaaaa","aaaaaa","aaaaaaa","aaaaaaaa","aaaaaaaaa","aaaaaaaaaa"], False),
 		("xnlxnlfvzztztgdkowgdkowgagqwnxugzwxugzwxnlgdkowgdkowgagqwnfvzztzt", ['fvz', 'aru', 'xnl', 'ztzt', 'gagqwn', 'xugzw', 'gdkow', 'xugzwxnl', 'gdkowgagqwn', 'xnlaru', 'xugzwxnlxnlaru', 'gdkowgdkowgagqwn'], True),
 		("ixgxejmcrdqjkfmcalrxejmcrjxnfyqcwwtcalrxejmcrcalrjxnfyqcwwtxejmcrdqjkfmdqjkfmcalrxejmcrjxnflwccpcalrxejmr", ['dqjkfm', 'lwccp', 'yqcwwt', 'calr', 'jxnf', 'xejmcr', 'ixg', 'xejmcrdqjkfm', 'jxnfyqcwwt', 'calrxejmcr', 'dqjkfmcalr', 'dqjkfmcalrxejmcr'], False),
@@ -1940,6 +1941,309 @@ def testHasCycle():
 
 	print "testHasCycle done!"
 
+def testDetectCycle():
+	testCase = [
+		([], None),
+		([1], None),
+	]
+
+	for case in testCase:
+		linkedLst = linked_list.createLinkedLst(case[0])
+		if test_module.detectCycle(linkedLst) != case[1]:
+			raise RuntimeError("testDetectCycle failed!!")
+
+	for i in xrange(100):
+		size = 15 + random.randint(0,5)
+		lst = []
+		while len(lst) < size:
+			val = random.randint(0,33)
+			if val not in lst:
+				lst.append(val)
+
+		linkedLst = linked_list.createLinkedLst(lst)
+		cycle = None
+		if random.randint(1,2) == 1:
+			idx = random.randint(1,size)
+			th = linkedLst
+			node = th
+			while th and th.next:
+				if idx == 1:
+					node = th
+				idx -= 1
+				th = th.next
+			th.next = node
+			cycle = node
+
+		if test_module.detectCycle(linkedLst) != cycle:
+			raise RuntimeError("testDetectCycle failed!!")
+
+	print "testDetectCycle done!"
+
+def testReorderList():
+	testCase = [
+		([1,2], "1,2"),	([1,2,3,4], "1,4,2,3"), ([], "None"),
+		([3, 4, 6, 18, 7, 23, 10, 12, 28, 29, 1, 22, 11, 8, 13, 15, 30, 20, 26, 31], "3,31,4,26,6,20,18,30,7,15,23,13,10,8,12,11,28,22,29,1",),
+		([13, 32, 9, 24, 14, 20, 3, 16, 23, 8, 0, 7, 26, 4, 30, 29, 10], "13,10,32,29,9,30,24,4,14,26,20,7,3,0,16,8,23",),
+		([21, 25, 10, 9, 14, 20, 26, 17, 12, 7, 16, 15, 11, 31, 3, 1], "21,1,25,3,10,31,9,11,14,15,20,16,26,7,17,12",),
+		([28, 10, 5, 1, 11, 27, 23, 33, 19, 16, 18, 8, 31, 6, 9, 15, 7, 0], "28,0,10,7,5,15,1,9,11,6,27,31,23,8,33,18,19,16",),
+		([16, 8, 28, 25, 6, 33, 4, 32, 9, 29, 10, 26, 0, 24, 23, 20, 14, 11, 1, 13], "16,13,8,1,28,11,25,14,6,20,33,23,4,24,32,0,9,26,29,10",),
+		([25, 10, 18, 16, 19, 23, 26, 32, 22, 20, 27, 15, 13, 6, 30, 21, 28, 29], "25,29,10,28,18,21,16,30,19,6,23,13,26,15,32,27,22,20",),
+		([20, 10, 1, 0, 33, 3, 31, 16, 32, 12, 26, 28, 15, 4, 27, 14, 6, 11, 22, 29], "20,29,10,22,1,11,0,6,33,14,3,27,31,4,16,15,32,28,12,26",),
+		([11, 23, 15, 6, 19, 32, 14, 25, 16, 2, 17, 21, 31, 30, 1, 27, 13, 22, 3], "11,3,23,22,15,13,6,27,19,1,32,30,14,31,25,21,16,17,2",),
+		([7, 15, 22, 20, 3, 31, 5, 0, 11, 24, 30, 23, 16, 28, 2, 27], "7,27,15,2,22,28,20,16,3,23,31,30,5,24,0,11",),
+		([13, 21, 33, 14, 8, 32, 7, 27, 1, 19, 24, 3, 18, 26, 30, 17, 4, 6, 22, 31], "13,31,21,22,33,6,14,4,8,17,32,30,7,26,27,18,1,3,19,24",),
+		([1, 23, 15, 28, 4, 33, 9, 2, 25, 13, 16, 22, 5, 26, 12, 24, 31, 18], "1,18,23,31,15,24,28,12,4,26,33,5,9,22,2,16,25,13",),
+		([24, 19, 14, 16, 30, 12, 4, 20, 32, 10, 21, 7, 23, 2, 33, 26, 27, 8, 17, 11], "24,11,19,17,14,8,16,27,30,26,12,33,4,2,20,23,32,7,10,21",),
+		([7, 3, 23, 1, 22, 26, 25, 0, 18, 13, 8, 24, 5, 2, 11], "7,11,3,2,23,5,1,24,22,8,26,13,25,18,0",),
+		([30, 33, 19, 7, 14, 11, 32, 26, 8, 27, 22, 15, 20, 29, 31], "30,31,33,29,19,20,7,15,14,22,11,27,32,8,26",),
+		([12, 1, 23, 17, 6, 21, 7, 15, 4, 33, 0, 8, 2, 9, 20, 10, 30, 19], "12,19,1,30,23,10,17,20,6,9,21,2,7,8,15,0,4,33",),
+		([20, 0, 15, 22, 13, 7, 26, 27, 30, 1, 10, 5, 2, 18, 17, 8], "20,8,0,17,15,18,22,2,13,5,7,10,26,1,27,30",),
+		([27, 2, 28, 21, 0, 1, 25, 22, 26, 6, 14, 31, 10, 18, 11, 29, 16, 7], "27,7,2,16,28,29,21,11,0,18,1,10,25,31,22,14,26,6",),
+		([4, 5, 3, 26, 15, 29, 23, 21, 18, 10, 11, 16, 22, 24, 0], "4,0,5,24,3,22,26,16,15,11,29,10,23,18,21",),
+		([16, 13, 20, 17, 18, 27, 5, 22, 32, 2, 24, 6, 30, 12, 23, 33, 25, 0, 21], "16,21,13,0,20,25,17,33,18,23,27,12,5,30,22,6,32,24,2",),
+		([23, 17, 20, 22, 13, 9, 25, 8, 27, 26, 4, 33, 0, 12, 32], "23,32,17,12,20,0,22,33,13,4,9,26,25,27,8",),
+		([10, 31, 7, 0, 23, 2, 8, 3, 28, 21, 13, 24, 18, 9, 12, 30, 19], "10,19,31,30,7,12,0,9,23,18,2,24,8,13,3,21,28",),
+		([3, 17, 2, 26, 23, 15, 20, 32, 30, 1, 16, 19, 5, 21, 25, 18], "3,18,17,25,2,21,26,5,23,19,15,16,20,1,32,30",),
+		([6, 11, 30, 8, 22, 16, 5, 20, 21, 32, 4, 33, 14, 24, 7, 9, 12, 19, 23], "6,23,11,19,30,12,8,9,22,7,16,24,5,14,20,33,21,4,32",),
+		([10, 7, 22, 3, 12, 21, 23, 5, 13, 24, 18, 14, 20, 31, 0, 26, 27], "10,27,7,26,22,0,3,31,12,20,21,14,23,18,5,24,13",),
+		([1, 18, 22, 16, 25, 2, 10, 21, 26, 33, 19, 11, 20, 23, 27], "1,27,18,23,22,20,16,11,25,19,2,33,10,26,21",),
+		([29, 33, 0, 9, 2, 14, 22, 21, 7, 26, 20, 3, 19, 15, 31, 16, 11], "29,11,33,16,0,31,9,15,2,19,14,3,22,20,21,26,7",),
+		([21, 19, 10, 0, 13, 18, 14, 20, 26, 15, 33, 25, 23, 30, 1, 27, 24, 31, 8, 4], "21,4,19,8,10,31,0,24,13,27,18,1,14,30,20,23,26,25,15,33",),
+		([33, 23, 5, 3, 18, 6, 31, 13, 8, 20, 4, 17, 27, 26, 10, 28, 9], "33,9,23,28,5,10,3,26,18,27,6,17,31,4,13,20,8",),
+		([28, 13, 25, 29, 33, 15, 16, 19, 24, 26, 12, 7, 9, 14, 17, 3], "28,3,13,17,25,14,29,9,33,7,15,12,16,26,19,24",),
+		([24, 9, 4, 17, 14, 16, 12, 26, 31, 10, 1, 29, 3, 13, 7, 25, 27, 33, 11, 15], "24,15,9,11,4,33,17,27,14,25,16,7,12,13,26,3,31,29,10,1",),
+		([13, 11, 28, 15, 33, 19, 32, 12, 1, 24, 17, 14, 21, 30, 26, 22, 0, 7, 16, 25], "13,25,11,16,28,7,15,0,33,22,19,26,32,30,12,21,1,14,24,17",),
+		([5, 17, 7, 12, 14, 20, 29, 33, 1, 9, 13, 18, 28, 3, 6], "5,6,17,3,7,28,12,18,14,13,20,9,29,1,33",),
+		([31, 21, 25, 0, 27, 22, 33, 15, 14, 30, 3, 12, 1, 18, 16, 32], "31,32,21,16,25,18,0,1,27,12,22,3,33,30,15,14",),
+	]
+
+	for case in testCase:
+		lst = linked_list.createLinkedLst(case[0])
+		test_module.reorderList(lst)
+		if str(lst) != case[1]:
+			raise RuntimeError("testReorderList failed!! %s" % case[0])
+
+	print "testReorderList done!"
+
+def testPreorderTraversal():
+	testCase = [
+		[],
+		[1],
+	]
+
+	for case in testCase:
+		tree = binary_tree.createTree(case)
+		preorder = binary_tree.preorder(tree)
+		ret = test_module.preorderTraversal(tree)
+		ret2 = test_module.preorderTraversal2(tree)
+		if ret != preorder or ret != ret2:
+			raise RuntimeError("testPreorderTraversal failed!!")
+
+
+	for i in xrange(25):
+		tree = binary_tree.createRandomTree(random.randint(15,18))
+		preorder = binary_tree.preorder(tree)
+		ret = test_module.preorderTraversal(tree)
+		ret2 = test_module.preorderTraversal2(tree)
+		if ret != preorder or ret != ret2:
+			raise RuntimeError("testPreorderTraversal failed!!")
+
+	print "testPreorderTraversal done!"
+
+
+def testPostorderTraversal():
+	testCase = [
+		[],
+		[1],
+	]
+
+	for case in testCase:
+		tree = binary_tree.createTree(case)
+		postorder = binary_tree.postorder(tree)
+		ret = test_module.postorderTraversal(tree)
+		ret2 = test_module.postorderTraversal2(tree)
+		if ret != postorder or ret != ret2:
+			raise RuntimeError("testPostorderTraversal failed!!")
+
+
+	for i in xrange(25):
+		tree = binary_tree.createRandomTree(random.randint(15,18))
+		postorder = binary_tree.postorder(tree)
+		ret = test_module.postorderTraversal(tree)
+		ret2 = test_module.postorderTraversal2(tree)
+		if ret != postorder or ret != ret2:
+			raise RuntimeError("testPostorderTraversal failed!!")
+
+	print "testPostorderTraversal done!"
+
+
+def testSingleNumber3():
+	testCase = [
+		([1,2,1,3,5,2], [3,5]),
+		([2,1,2,3,4,1], [3,4]),
+		([0,0,1,2], [1,2]),
+		([-1139700704,-1653765433], [-1139700704,-1653765433]),
+		([12, 5, -6, -8, 0, 3, 0, 4, -9, -8, 12, 9, 5, 3, 6, -2, -12, 9, -11, -6, 7, -10, 7, 6, 15, -10, -11, 15, -9, 4], [-12, -2]),
+		([9, 15, 1, 10, -13, 0, -5, 11, -4, -3, 15, 8, -13, -4, -7, 11, 1, 9, 4, 3, -7, 3, 12, 0, -5, 4, -3, 12, 13, 8], [10, 13]),
+		([-14, 13, -2, 8, 8, -4, -10, 13, -5, -1, 6, -14, 14, -1, -6, -8, -8, -13, 6, 14, -13, -6, -4, -5, 9, 9, 0, 7, 0, -10], [-2, 7]),
+		([-13, 12, 2, -11, -15, 5, -8, -15, -14, -6, -8, -7, 1, 6, -11, -1, 9, 4, -1, 6, 9, -14, 2, -10, -13, 5, -10, 4, 0, 12, -7, 1], [0, -6]),
+		([-9, -15, 1, 12, 0, -14, -7, 5, -1, 6, 13, -9, 6, -1, -12, 1, -8, -7, -8, 5, -11, -11, 12, 8, 0, 13, -6, -14, -6, 2, 8, -10, 2, -15], [-12, -10]),
+		([1, -6, -2, 8, 5, 9, 14, 8, -7, -15, 15, -9, -5, -1, -13, -9, 11, 3, 11, -5, 5, 9, 0, 0, -15, -2, 14, 15, 1, -6, -13, 3], [-7, -1]),
+		([-5, -5, 1, -15, 15, -2, 10, -3, -1, -11, 10, -2, 15, 1, 13, -1, -9, -11, -9, 8, -15, -3, 2, 2, 7, 13, 8, 7, -14, 12], [12, -14]),
+		([-11, 6, 5, -6, -6, -3, -3, 0, 2, 8, 15, -2, 3, -12, 14, 3, -2, 6, 14, 8, -5, 0, 5, 2, 15, 9, -10, 9, -5, -11], [-12, -10]),
+		([9, 1, -8, 0, 5, -4, 4, -11, -13, -14, -9, 5, -4, 14, 1, 4, 9, -5, -8, -13, -5, 0, 13, -9, -2, 14, -2, -11], [-14, 13]),
+		([-2, 6, 5, -13, -15, 7, -2, -5, -8, 7, 15, -4, 2, 3, -14, -4, -1, 2, -5, -14, -8, -10, -1, 14, -10, 3, 5, 13, -15, -13, 10, 13, 6, 10], [14, 15]),
+		([-8, 4, -5, -12, 14, -6, 8, 2, 15, -3, 2, 0, 4, 3, 15, -15, -6, -8, -12, 5, 8, -3, -15, -9, -9, 11, 12, 0, 14, -5, 11, 12, -11, -11], [5, 3]),
+		([-15, 9, -7, 8, 3, -4, -6, -8, -2, 15, -8, -2, -14, 10, -4, 12, 10, -5, -10, -7, -10, 8, -15, -6, 3, 9, 15, -14], [12, -5]),
+		([-9, -1, -3, 11, 11, 15, -3, 12, -4, 7, -8, -4, 7, 15, -2, -12, -5, -5, 0, 0, 6, -12, -8, -6, 12, -9, -6, 1, 2, 1, 6, -2], [2, -1]),
+		([-13, -6, 8, -10, -15, 2, -13, -15, -5, 4, 10, 12, 14, -8, 9, -3, 10, 8, 14, -3, 9, -7, -6, 4, -10, -5, 2, -8, -7, 15], [12, 15]),
+		([0, 6, 0, 4, -14, 1, 2, -12, -7, -15, -14, -1, -15, 1, 6, -12, -1, 4, -10, -6, 9, 2, -10, 13, 13, 5, -6, -7, 5, 10], [10, 9]),
+		([1, 8, -12, 14, -2, 3, -1, -13, 3, -5, -7, 8, -12, 1, -13, -14, -4, -9, -8, -2, 10, -4, -9, 12, -5, 10, -14, 12, 14, 9, -8, -7], [9, -1]),
+		([0, -15, 0, -12, -4, 13, -4, 1, -5, -8, -7, -5, -13, -7, -11, -15, -13, -10, 11, 2, -12, -8, 13, 4, -11, 2, 10, 1, 10, -10], [4, 11]),
+		([7, 0, -9, -6, 12, 13, 7, 14, -13, -15, 8, -13, 12, 14, -9, 15, 1, -12, 11, -10, 3, -10, -6, 8, 11, 13, -1, 9, -12, 9, 0, 15, 1, 3], [-15, -1]),
+		([11, -4, 2, -2, -7, -6, -7, 11, 4, 12, -9, 5, 3, -6, 3, 2, -4, -15, -15, -1, 4, -14, -14, -9, -2, 12, 5, 14], [14, -1]),
+		([6, 3, 9, -9, 9, 14, 13, 8, 1, 12, 3, 4, -3, -9, -12, 14, -11, -11, -8, 11, 8, 6, -12, 15, -3, 5, 12, 1, -8, 4, 11, 13, -10, 5], [-10, 15]),
+		([-6, 0, -3, -14, 10, 1, -9, -1, 3, 9, 7, 9, -10, -3, -13, -7, -9, 12, -1, 7, 1, 13, -13, -6, -7, 3, 10, -14, 13, 0, 8, -10], [8, 12]),
+		([-13, 9, 1, 15, 11, -10, 10, -14, 5, -9, 9, -14, 11, -6, 13, 13, -4, 4, 4, 8, -4, -8, 5, -11, 15, -9, -8, -11, -10, -6, -13, 10], [8, 1]),
+		([-3, 6, 1, -3, -4, -8, -11, -4, -11, -5, -9, -1, -9, 10, 12, 12, -6, -13, 10, 3, 1, 15, -6, -13, -1, 15, -5, -8, 7, 3], [6, 7]),
+		([-10, -11, -11, 6, -2, 0, -14, 1, 9, -3, -2, 0, 15, 14, 10, 15, 5, -6, 12, -14, 10, -6, 12, 5, -5, 4, 4, -10, 9, 1, 14, -7, -3, -7], [6, -5]),
+		([13, 2, -10, 10, 11, 15, 6, 15, -3, -1, 8, -13, -1, 8, -5, -3, 11, 12, 5, -5, -6, 6, -6, -10, 2, -13, 10, -4, 12, -4], [5, 13]),
+	]
+	
+	for case in testCase:
+		if sorted(test_module.singleNumber3(case[0])) != sorted(case[1]):
+			raise RuntimeError("testSingleNumber3 failed!! %s" % case[0])
+	print "testSingleNumber3 done!"
+
+
+def testInsertionSortList():
+	testCase = [
+		([1], "1"), ([], "None"), ([1,2], "1,2"), ([2,1], "1,2"),
+		([25, 84, 49, 3, 48, 69, 75, 33, 93, 28, 85, 26, 80, 43, 41, 36], "3,25,26,28,33,36,41,43,48,49,69,75,80,84,85,93"),
+		([8, 46, 76, 78, 11, 70, 66, 22, 59, 47, 23, 25, 41, 32, 27], "8,11,22,23,25,27,32,41,46,47,59,66,70,76,78"),
+		([1, 38, 13, 66, 34, 52, 94, 53, 17, 63, 81, 80, 77, 23, 88, 10, 96, 25], "1,10,13,17,23,25,34,38,52,53,63,66,77,80,81,88,94,96"),
+		([65, 77, 9, 5, 80, 3, 62, 36, 68, 22, 51, 86, 92, 17, 7, 14, 56], "3,5,7,9,14,17,22,36,51,56,62,65,68,77,80,86,92"),
+		([93, 52, 14, 32, 84, 61, 3, 76, 29, 58, 16, 30, 65, 55, 4, 60, 62, 74], "3,4,14,16,29,30,32,52,55,58,60,61,62,65,74,76,84,93"),
+		([81, 83, 67, 10, 17, 21, 52, 60, 64, 82, 0, 47, 9, 24, 20, 42, 34, 87], "0,9,10,17,20,21,24,34,42,47,52,60,64,67,81,82,83,87"),
+		([15, 89, 17, 97, 51, 69, 23, 82, 37, 71, 67, 5, 8, 60, 33, 20, 93], "5,8,15,17,20,23,33,37,51,60,67,69,71,82,89,93,97"),
+		([79, 98, 26, 90, 59, 83, 88, 46, 60, 39, 14, 65, 51, 38, 72, 8, 33], "8,14,26,33,38,39,46,51,59,60,65,72,79,83,88,90,98"),
+		([39, 20, 50, 79, 77, 3, 99, 18, 25, 66, 69, 44, 23, 26, 2, 97, 6, 86], "2,3,6,18,20,23,25,26,39,44,50,66,69,77,79,86,97,99"),
+		([53, 14, 17, 52, 46, 16, 70, 18, 37, 36, 90, 91, 5, 67, 60, 98, 81], "5,14,16,17,18,36,37,46,52,53,60,67,70,81,90,91,98"),
+		([16, 10, 70, 21, 43, 29, 97, 51, 65, 54, 99, 69, 89, 46, 44], "10,16,21,29,43,44,46,51,54,65,69,70,89,97,99"),
+		([14, 71, 10, 8, 87, 90, 97, 40, 38, 73, 28, 13, 2, 36, 59, 46, 1, 98], "1,2,8,10,13,14,28,36,38,40,46,59,71,73,87,90,97,98"),
+		([32, 40, 38, 68, 21, 72, 24, 3, 60, 9, 11, 27, 64, 19, 23, 57], "3,9,11,19,21,23,24,27,32,38,40,57,60,64,68,72"),
+		([69, 23, 8, 64, 54, 3, 84, 0, 99, 83, 62, 60, 96, 67, 12, 93, 19, 1], "0,1,3,8,12,19,23,54,60,62,64,67,69,83,84,93,96,99"),
+		([96, 8, 11, 32, 95, 45, 2, 37, 7, 53, 16, 89, 87, 0, 1], "0,1,2,7,8,11,16,32,37,45,53,87,89,95,96"),
+		([98, 58, 9, 46, 90, 38, 64, 43, 27, 74, 94, 68, 16, 87, 25, 32, 91, 18], "9,16,18,25,27,32,38,43,46,58,64,68,74,87,90,91,94,98"),
+		([39, 4, 87, 42, 34, 13, 67, 72, 63, 45, 75, 11, 2, 32, 6], "2,4,6,11,13,32,34,39,42,45,63,67,72,75,87"),
+		([51, 95, 79, 3, 69, 53, 74, 84, 77, 6, 64, 38, 48, 81, 54], "3,6,38,48,51,53,54,64,69,74,77,79,81,84,95"),
+		([34, 36, 10, 11, 81, 13, 26, 92, 15, 21, 49, 51, 31, 80, 60, 44, 69], "10,11,13,15,21,26,31,34,36,44,49,51,60,69,80,81,92"),
+		([48, 52, 40, 75, 11, 72, 13, 91, 53, 39, 88, 31, 50, 44, 83, 100, 21, 28], "11,13,21,28,31,39,40,44,48,50,52,53,72,75,83,88,91,100"),
+		([31, 46, 25, 28, 61, 29, 94, 63, 22, 16, 4, 7, 87, 84, 39, 3, 53, 77], "3,4,7,16,22,25,28,29,31,39,46,53,61,63,77,84,87,94"),
+		([4, 46, 30, 18, 94, 62, 45, 35, 82, 93, 32, 40, 42, 87, 97], "4,18,30,32,35,40,42,45,46,62,82,87,93,94,97"),
+		([50, 27, 28, 12, 87, 64, 65, 4, 22, 31, 36, 38, 25, 52, 95, 5, 60], "4,5,12,22,25,27,28,31,36,38,50,52,60,64,65,87,95"),
+		([99, 40, 26, 87, 60, 38, 96, 89, 13, 1, 33, 32, 84, 71, 63, 30, 21], "1,13,21,26,30,32,33,38,40,60,63,71,84,87,89,96,99"),
+		([85, 81, 8, 59, 94, 87, 63, 65, 48, 68, 67, 29, 22, 31, 37], "8,22,29,31,37,48,59,63,65,67,68,81,85,87,94"),
+	]
+
+	for case in testCase:
+		linkedList = linked_list.createLinkedLst(case[0])
+		if str(test_module.insertionSortList(linkedList)) != case[1]:
+			raise RuntimeError("testInsertionSortList failed!! %s" % case[0])
+
+
+	print "testInsertionSortList done!"
+
+
+def testQuickSortLinkedList():
+	testCase = [
+		([1], "1"),
+		([1,2], "1,2"),
+		([2,1], "1,2"),
+		([1,2,3,4], "1,2,3,4"),
+		([1,2,3,4,5,6,7], "1,2,3,4,5,6,7"),
+		([1,3,3,1,3,1,3,3,2], "1,1,1,2,3,3,3,3,3"),
+	]
+
+	for i in xrange(25):
+		size = random.randint(25, 150)
+		lst = []
+		while len(lst) < size:
+			val = random.randint(0, 10)
+			lst.append(val)
+		linkedLst = linked_list.createLinkedLst(lst)
+		if str(test_module.quickSortLinkedList(linkedLst)) != ",".join(map(str, sorted(lst)) ):
+			raise RuntimeError("testQuickSortLinkedList failed!!")
+
+
+	for case in testCase:
+		lst = linked_list.createLinkedLst(case[0])
+		if str(test_module.quickSortLinkedList(lst)) != case[1]:
+			raise RuntimeError("testQuickSortLinkedList failed!!")
+
+	print "testQuickSortLinkedList done!"
+
+def testMergeSortLinkedList():
+	testCase = [
+		([1], "1"),
+		([1,2], "1,2"),
+		([2,1], "1,2"),
+		([1,2,3,4], "1,2,3,4"),
+		([1,2,3,4,5,6,7], "1,2,3,4,5,6,7"),
+		([1,3,3,1,3,1,3,3,2], "1,1,1,2,3,3,3,3,3"),
+	]
+
+	for i in xrange(25):
+		size = random.randint(25, 150)
+		lst = []
+		while len(lst) < size:
+			val = random.randint(0, 10)
+			lst.append(val)
+		linkedLst = linked_list.createLinkedLst(lst)
+		if str(test_module.mergeSortLinkedList(linkedLst)) != ",".join(map(str, sorted(lst)) ):
+			raise RuntimeError("testMergeSortLinkedList failed!!")
+
+
+	for case in testCase:
+		lst = linked_list.createLinkedLst(case[0])
+		if str(test_module.mergeSortLinkedList(lst)) != case[1]:
+			raise RuntimeError("testMergeSortLinkedList failed!!")
+
+	print "testMergeSortLinkedList done!"
+
+def testMaxProduct():
+	testCase = [
+		([], 0), ([-2], -2),	([0,2], 2),([2,0], 2),	([-2,0,-1], 0),([3,-1,4], 4),([-2,3,-4], 24),([2,-5,-2,-4,3], 24),([-1,-2,-9,-6], 108),
+		([1, -1, -8, 4, 2, 3, 6, 10, -3, -7, 2], 483840),([8, 8, -9, -9, -5, -7, -10, -2], 3628800),	([4, 9, -3, 10, -10, -7, 6, -2], 907200),
+		([-9, 10, 1, -8, -3, 4, 6, -9, -8, 1, -10, 9], 335923200),([9, -2, 6, 3, 9, 7, 0, 2, -2, -7, -6], 1134),
+		([4, 7, 6, -3, -9, 10, -8, -7], 2540160),([-5, 8, -3, -1, 8, 2, 9, 0, 1, 7, 8], 3456),
+		([8, 6, 7, -7, 10, -7, -5, 0, 5, 6], 164640),([8, -1, 6, 6, -6, 0, -7, 5, 2], 1728),
+		([-5, -7, 1, -4, 6, 9, -7, 5, 9], 2381400),	([-4, 4, 8, 9, 1, 2, -5, -9, 5, -8, -7], 7257600),
+		([-5, -3, -8, -2, 9, -6, -9, -9, 10, -1, 3, 7], 220449600),	([-9, 5, 6, 9, 9, 1, -10, -7, 9, -9, -10, 1], 137781000),
+		([-1, 8, 3, 10, -5, -1, -8, -1, 5, -7], 336000),([-10, 0, -5, 9, 4, 6, 0, -3], 216),([3, 1, -2, 8, -8, 3, 8, -8, -7], 516096),
+		([6, -1, 8, 7, 0, -10, -1, 10, 0], 100),([-1, -1, 5, 4, 4, -5, -5, -5, 2, 0, -1, -9], 20000),
+	]
+
+	for case in testCase:
+		if test_module.maxProduct(case[0]) != case[1]:
+			raise RuntimeError("testMaxProduct failed!! %s" % case[0])
+
+
+	print "testMaxProduct done!"
+
+def testEvalRPN():
+	testCase = [
+		(["2", "1", "+", "3", "*"], 9), 
+		(["4", "13", "5", "/", "+"], 6),
+		(["0","3","/"], 0), (["18"], 18),
+		(["10","6","9","3","+","-11","*","/","*","17","+","5","+"], 22),
+	]
+
+	for case in testCase:
+		if test_module.evalRPN(case[0]) != case[1]:
+			raise RuntimeError("testEvalRPN failed!! %s" % case[0])
+
+	print "testEvalRPN done!"
 
 
 
@@ -2002,27 +2306,38 @@ tests = [
 	# (testIsValidBST, "# Tree, Depth-first Search\ndef isValidBST(root):"),
 	# (testZigzagLevelOrder, "#Tag: Tree, Breadth-first Search, Stack\ndef zigzagLevelOrder(root):"),
 
-	# (testBuildTreeFromPreIn, "#Tag: Tree, Array, Depth-first Search\ndef buildTreeFromPreIn(preorder, inorder):"),
-	# (testBuildTreeFromPostIn, "#Tag: Tree, Array, Depth-first Search\ndef buildTreeFromPostIn(postorder, inorder):"),
-	# (testSortedArrayToBST, "#Tag:Tree, Depth-first Search\ndef sortedArrayToBST(nums):"),
-	# (testSortedListToBST, "#Tag: Depth-first Search, Linked List\ndef sortedListToBST(head):"),
-	# (testFlatten, "#Tag: Tree, Depth-first Search\ndef flatten(root):\n\n\ndef flatten2(root):"),
-	# (testPathSum, "#Tag: Tree, Depth-first Search\ndef pathSum(root, sum):"),
-	# (testConnectTree, "#Tag: Tree, Depth-first Search\ndef connectTree(root):"), 
-	# (testMinimumTotal, "#Array, Dynamic Programming\ndef minimumTotal(triangle):"),
-	# (testMaxProfit, "#Tag: Array, Dynamic Programming\ndef maxProfit(prices):"),
-	# (testMaxProfit2, "#Tag: Array, Greedy\ndef maxProfit2(prices):"),
+	(testBuildTreeFromPreIn, "#Tag: Tree, Array, Depth-first Search\ndef buildTreeFromPreIn(preorder, inorder):"),
+	(testBuildTreeFromPostIn, "#Tag: Tree, Array, Depth-first Search\ndef buildTreeFromPostIn(postorder, inorder):"),
+	(testSortedArrayToBST, "#Tag:Tree, Depth-first Search\ndef sortedArrayToBST(nums):"),
+	(testSortedListToBST, "#Tag: Depth-first Search, Linked List\ndef sortedListToBST(head):"),
+	(testFlatten, "#Tag: Tree, Depth-first Search\ndef flatten(root):\n\n\ndef flatten2(root):"),
+	(testPathSum, "#Tag: Tree, Depth-first Search\ndef pathSum(root, sum):"),
+	(testConnectTree, "#Tag: Tree, Depth-first Search\ndef connectTree(root):"), 
+	(testMinimumTotal, "#Array, Dynamic Programming\ndef minimumTotal(triangle):"),
+	(testMaxProfit, "#Tag: Array, Dynamic Programming\ndef maxProfit(prices):"),
+	(testMaxProfit2, "#Tag: Array, Greedy\ndef maxProfit2(prices):"),
 
 	(testSumNumbers, "#Tag: Tree, Depth-first Search\ndef sumNumbers(root):"),
 	(testWordLadder, "def wordLadder(beginWord, endWord, wordList):"),
-	(testSurroundedRegons, "#Tag:Breadth-first Search, Union Find\ndef surroundedRegons(self, board):"),
+	(testSurroundedRegons, "#Tag:Breadth-first Search, Union Find\ndef surroundedRegons(board):"),
 	(testPalindromePartition, "#Tag:Backtracking\ndef palindromePartition(s):"),
 	(testCloneGraph, "#Tag:Depth-first Search, Breadth-first Search, Graph\ndef cloneGraph(node):"),
 	(testCanCompleteCircuit, "#tag: Greedy\ndef canCompleteCircuit(gas, cost):"),
-	(testSingleNumber, "#Tag: Hash Table, Bit Manipulation/ndef singleNumber(nums):"),
+	(testSingleNumber, "#Tag: Hash Table, Bit Manipulation\ndef singleNumber(nums):"),
 	(testSingleNumber2, "#Tag:Bit Manipulation\ndef singleNumber2(nums):"),
 	(testWordBreak, "#Tag: Dynamic Programming\ndef wordBreak(s, wordDict):"),
 	(testHasCycle, "#Tag:Linked List, Two Pointers\ndef hasCycle(head):"),
+
+	# (testDetectCycle, "#Tag:Linked List, Two Pointers\ndef detectCycle(head):"),
+	# (testReorderList, "#Tag: linked list\ndef reorderList(head):"),
+	# (testPreorderTraversal, "#Tag:Tree, Stack\ndef preorderTraversal(root):\n\n\ndef preorderTraversal2(root):"),
+	# (testPostorderTraversal, "#Tag:Tree, Stack\ndef postorderTraversal(root):\n\n\ndef postorderTraversal2(root):"),
+	# (testSingleNumber3, "#Tag:  Bit Manipulation\ndef singleNumber3(nums):"),
+	# (testInsertionSortList, "#Linked List, Sort\ndef insertionSortList(head):"),
+	# (testQuickSortLinkedList, "#Tag:Linked List, Sort\ndef quickSortLinkedList(head):"),
+	# (testMergeSortLinkedList, "#Tag:Linked List, Sort\ndef mergeSortLinkedList(head):"),
+	# (testEvalRPN, "#Tag: Stack\ndef evalRPN(tokens):"),
+	# (testMaxProduct, "#Array, Dynamic Programming\ndef maxProduct(nums):"),
 ]	
 
 import os
@@ -2136,6 +2451,7 @@ def callFunc(func):
 
 def testFuncs(funcs):
 
+	beginTime = time.time()
 	while True:
 
 		pause("Press any keys when ready....\n", True)
@@ -2147,6 +2463,8 @@ def testFuncs(funcs):
 
 		if pause("try again? y/n\n") == 'n':
 			break
+
+	return time.time() - beginTime
 
 
 
@@ -2168,14 +2486,16 @@ def testEx():
 
 	cnt = getQuestionCnt()
 	totalCnt = len(testLst)
+	beginTime = time.time()
 	progress = 0
 	while len(testLst):
 		try:
 			funcs = initFuncs(testLst, tempName, cnt)
-			testFuncs(funcs)
+			timeUsed = testFuncs(funcs)
 			totalProgress = increaseSolvedCnt(len(funcs))
 			progress += len(funcs)
-			print "====================(%d/%d, totalProgress:%d)==================" % (progress, totalCnt, totalProgress)
+			print "====================(%d/%d, totalProgress:%d, totalTimeSpent:%d, currentTimeSpent:%d)==================" \
+				% (progress, totalCnt, totalProgress, time.time() - beginTime, timeUsed)
 		except KeyboardInterrupt:
 			askForQuit()
 				

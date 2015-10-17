@@ -1316,6 +1316,8 @@ def singleNumber2(nums):
 #Word Break
 #Tag: Dynamic Programming
 def wordBreak(s, wordDict):
+    if not s:
+        return True if not any(wordDict) else False
     dp = [0] * (len(s) + 1)
     dp[0] = 1
     for i in xrange(len(s)):
@@ -1337,3 +1339,261 @@ def hasCycle(head):
             return True
         
     return False 
+
+#Linked List Cycle II
+#Tag:Linked List, Two Pointers
+def detectCycle(head):
+    p1 = p2 = head
+    while p2:
+        p2 = p2.next.next if p2.next else p2.next
+        p1 = p1.next
+        if p1 == p2 and p2 != None:
+            p1 = head
+            while p1 != p2:
+                p1 = p1.next
+                p2 = p2.next
+            return p1
+
+    return None
+
+#Reorder List
+#Tag: linked list
+def reorderList(head):
+    def reverse(head):
+        temp = linked_list.Node(-1)
+        temp.next = head
+        while head and head.next:
+            x = head.next
+            head.next = x.next
+            x.next = temp.next
+            temp.next = x
+        return temp.next
+        
+        
+    if not head:
+        return head
+        
+    th1, th2 = head, head
+    while th2 and th2.next and th2.next.next:
+        th2 = th2.next.next
+        th1 = th1.next
+        
+    
+    th2 = reverse(th1.next)
+    th1.next = None
+    th1 = head
+    while th2:
+        temp = th2.next
+        th2.next = th1.next
+        th1.next = th2
+        th1 = th1.next.next
+        th2 = temp
+
+#Binary Tree Preorder Traversal
+#Tag:Tree, Stack
+def preorderTraversal(root):
+    ret = []
+    while root:
+        if root.left:
+            temp = root.left
+            while temp.right and temp.right != root:
+                temp = temp.right
+            if temp.right:
+                temp.right = None
+                root = root.right
+            else:
+                temp.right = root
+                ret.append(root.val)
+                root = root.left
+        else:
+            ret.append(root.val)
+            root = root.right
+    return ret
+
+def preorderTraversal2(root):
+    ret = []
+    stack = [root]
+    while stack:
+        node = stack.pop()
+        if node:
+            ret.append(node.val)
+            stack.append(node.right)
+            stack.append(node.left)
+    return ret
+
+#Binary Tree Postorder Traversal
+#Tag:Tree, Stack
+def postorderTraversal(root):
+    stack = [root]
+    ret = []
+    while stack:
+        node = stack.pop()
+        if node:
+            ret.append(node.val)
+            stack.append(node.left)
+            stack.append(node.right)
+    return ret[::-1]
+
+def postorderTraversal2(root):
+    ret = []
+    while root:
+        if root.right:
+            temp = root.right
+            while temp.left and temp.left != root:
+                temp = temp.left
+            if temp.left:
+                temp.left = None
+                root = root.left
+            else:
+                temp.left = root
+                ret.append(root.val)
+                root = root.right
+        else:
+            ret.append(root.val)
+            root = root.left
+            
+    return ret[::-1]
+
+#Single Number III
+#Tag:  Bit Manipulation
+def singleNumber3(nums):
+    temp = 0
+    for n in nums:
+        temp ^= n
+    temp &= -temp
+    ret = [0,0]
+    for n in nums:
+        if n & temp == 0:
+            ret[0] ^= n
+        else:
+            ret[1] ^= n
+    return ret
+
+#Insertion Sort List
+#Linked List, Sort
+def insertionSortList(head):
+    dummy = linked_list.Node(-1)
+    dummy.next = head
+    pt = head
+    prev = None
+    while pt:
+        if prev == None or prev.val <= pt.val:
+            prev = pt
+            pt = pt.next
+        else:
+            mark = pt.next
+            temp = dummy
+            while temp.next and temp.next.val <= pt.val:
+                temp = temp.next
+            pt.next = temp.next
+            temp.next = pt
+            pt = mark
+            prev.next = mark
+    
+    return dummy.next
+
+#Sort List
+#Tag:Linked List, Sort
+def quickSortLinkedList(head):
+    def sort(head, tail):
+        if head.next == tail or head.next.next == tail:
+            return
+
+        h1, h2, h3 = head, head.next, linked_list.Node(-1)
+        t1, t2, t3 = h1, h2, h3
+        pt, val = h2.next, h2.val
+        while pt and pt != tail:
+            if pt.val < val:
+                t1.next, t1, pt = pt, pt, pt.next
+            elif pt.val == val:
+                t2.next, t2, pt = pt, pt, pt.next
+            else:
+                t3.next, t3, pt = pt, pt, pt.next
+
+        t1.next = h2
+        t3.next = tail
+        t2.next = h3.next
+        
+        sort(h1, h2.next)
+        sort(t2, tail)
+
+    dummy = pt = linked_list.Node(-1)
+    pt.next = head
+    sort(pt, None)
+
+    return dummy.next
+
+
+
+def mergeSortLinkedList(head):
+    def merge(lst1, lst2, head):
+        while lst1 and lst2:
+            if lst1.val < lst2.val:
+                head.next = lst1
+                lst1 = lst1.next
+            else:
+                head.next = lst2
+                lst2 = lst2.next
+            head = head.next
+        head.next = lst1 if not lst2 else lst2
+        while head.next:
+            head = head.next
+        return head
+
+    def split(head, cnt):
+        while cnt > 1 and head:
+            head = head.next
+            cnt -= 1
+        if not head:
+            return None
+
+        temp, head.next = head.next, None
+        return temp
+
+    def sort(head):
+        th = head.next
+        size = 0
+        while th:
+            th = th.next
+            size += 1
+
+        i = 1
+        while i < size:
+            cur = head.next
+            tail = head
+            while cur:
+                left = cur
+                right = split(cur, i)
+                cur = split(right, i)
+                tail = merge(left, right, tail)
+            i *= 2
+
+        return head.next
+
+    dummy = linked_list.Node(-1)
+    dummy.next = head
+    return sort(dummy)
+
+
+#Maximum Product Subarray
+#Array, Dynamic Programming
+def maxProduct(nums):
+    if not nums:
+        return 0
+    maxVal = minVal = ret = nums[0]
+    for n in nums[1:]:
+        maxVal, minVal = max( maxVal * n, minVal * n, n ), min( maxVal * n, minVal * n, n )
+        ret = max(maxVal, ret)
+    return ret
+
+#Evaluate Reverse Polish Notation
+#Tag: Stack
+def evalRPN(tokens):
+    stack = []
+    ops = {'+':lambda x, y: x+y, '-':lambda x, y: x-y, '*':lambda x, y: x*y, '/':lambda x, y: x/y}
+    for s in tokens:
+        try:
+            stack.append( float( s ) )
+        except:
+            stack.append( int( ops[s]( stack.pop(-2), stack.pop(-1) ) ) )
+    return int( stack[-1] )

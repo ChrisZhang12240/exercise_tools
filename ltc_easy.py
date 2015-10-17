@@ -695,25 +695,18 @@ def removeElements(head, val):
 
 #Count primes
 def countPrimes(n):
-    if n <= 1:
-        return 0
-        
-    ret = [True for i in xrange(0, n)]
-    ret[1] = False
-    i = 2
-    while i * i < n:
-        if ret[i] == False:
-            i += 1
-            continue
-        for j in xrange(i*i, n, i):
-            ret[j] = False
-            
-        i += 1
-    cnt = 0
-    for i in xrange(1, n):
-        if ret[i]:
-            cnt += 1
-    return cnt
+	if n < 2:
+		return 0
+	
+	dp = [True] * n
+	dp[0] = dp[1] = False
+	for i in xrange(2, n):
+		if dp[i] == False:
+			continue
+		for j in xrange(i*i, n, i):
+			dp[j] = False
+
+	return dp.count(True)
 
 
 #Isomorphic Strings
