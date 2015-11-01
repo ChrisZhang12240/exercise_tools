@@ -2,6 +2,7 @@ import importlib
 import random
 import binary_tree
 import linked_list
+import time
 
 test_module = None
 def randomString(size):
@@ -1152,6 +1153,7 @@ def callFunc(func):
 
 def testFuncs(funcs):
 
+	beginTime = time.time()
 	while True:
 
 		pause("Press any keys when ready....\n", True)
@@ -1163,6 +1165,8 @@ def testFuncs(funcs):
 
 		if pause("try again? y/n\n") == 'n':
 			break
+
+	return time.time() - beginTime
 
 
 
@@ -1184,14 +1188,16 @@ def testEx():
 
 	cnt = getQuestionCnt()
 	totalCnt = len(testLst)
+	beginTime = time.time()
 	progress = 0
 	while len(testLst):
 		try:
 			funcs = initFuncs(testLst, tempName, cnt)
-			testFuncs(funcs)
+			timeUsed = testFuncs(funcs)
 			totalProgress = increaseSolvedCnt(len(funcs))
 			progress += len(funcs)
-			print "====================(%d/%d, totalProgress:%d)==================" % (progress, totalCnt, totalProgress)
+			print "====================(%d/%d, totalProgress:%d, totalTimeSpent:%d, currentTimeSpent:%d)==================" \
+				% (progress, totalCnt, totalProgress, time.time() - beginTime, timeUsed)
 		except KeyboardInterrupt:
 			askForQuit()
 				

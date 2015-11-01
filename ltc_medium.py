@@ -278,16 +278,16 @@ def searchRange(nums, target):
 
 #Search Insert Position
 def searchInsert(nums, target):
-    def search(lst, lo, hi, target):
-        if hi - lo < 1:
-            return lo
-        mid = lo + (hi - lo)/2
-        if lst[mid] < target:
-            return search(lst, mid+1, hi, target)
-        else:
-            return search(lst, lo, mid, target)
+	lo, hi = 0, len(nums)
+	while lo < hi:
+		mid = lo + (hi - lo) / 2
+		if nums[mid] < target:
+			lo = mid + 1
+		else:
+			hi = mid
+
+	return lo
             
-    return search(nums, 0, len(nums), target)
 
 #Combination Sum 
 def combinationSum(candidates, target):
@@ -1597,3 +1597,229 @@ def evalRPN(tokens):
         except:
             stack.append( int( ops[s]( stack.pop(-2), stack.pop(-1) ) ) )
     return int( stack[-1] )
+
+#Reverse Words in a String
+#Tag:String
+def reverseWords(s):
+    ret = []
+    for c in s:
+        if not ret or (c == ' ' and ret[-1] != ""):
+            ret.append("")
+        if c != ' ':
+            ret[-1] += c
+            
+    ret = ret[:-1] if len(ret) and ret[-1] == "" else ret
+    return " ".join(ret[::-1])
+
+#Find Minimum in Rotated Sorted Array II
+#Tag: Array, Binary Search
+def findMinInRotatedSortedArray(nums):
+    lo, hi = 0, len(nums)-1
+    while lo < hi:
+        mid = lo + (hi - lo)/2
+        if nums[mid] < nums[hi]:
+            hi = mid
+        elif nums[mid] > nums[hi]:
+            lo = mid + 1
+        else:
+            hi -= 1
+    
+    return nums[lo] if lo < len(nums) else 0
+
+#Find Peak Element
+#Tag: Array, Binary Search
+def findPeakElement(nums):
+    for i in xrange(len(nums)):
+        cur = nums[i]
+        prev, nxt = nums[i-1] if i > 0 else cur-1, nums[i+1] if i < len(nums)-1 else cur - 1
+        if prev < cur > nxt:
+            return i
+    return -1
+
+#Fraction to Recurring Decimal
+#Tag: Hash Table, Math
+def fractionToDecimal(numerator, denominator):
+    if numerator == 0 or denominator == 0:
+        return '0'
+    ret = "-" if (numerator < 0) ^ (denominator < 0) else ""
+    numerator, denominator = abs(numerator), abs(denominator)
+    val, numerator = divmod(numerator, denominator)
+    ret += '%d' % val  + ('.' if numerator else "")
+    
+    mp = {}
+    right = ""
+    while numerator:
+        if mp.has_key(numerator):
+            i = mp[numerator]
+            right = right[:i] + '(' + right[i:] + ')'
+            break
+        
+        mp[numerator] = len(right)
+        numerator *= 10
+        val, numerator = divmod(numerator, denominator)
+        right += "%d" % val
+    
+    return ret + right
+
+#Largest Number
+#Tag: sort
+def largestNumber(nums):
+    lst = map(str, nums)
+    lst.sort(cmp = lambda x, y: cmp(x+y, y+x), reverse = True)
+    ret = "".join(lst) 
+    return ret.lstrip('0') or '0'
+
+
+#Repeated DNA Sequences
+#Tag: Hash Table, Bit Manipulation
+def findRepeatedDnaSequences(s):
+    mask, val, ret, mp = 2 ** 30 - 1, 0, [], {}
+    for i in xrange(0, len(s)):
+        val = (val << 3) | (ord(s[i]) & 7)
+        if i >= 9:
+            val = val & mask
+            mp[val] = 1 if not mp.has_key(val) else mp[val] + 1
+            if mp[val] == 2:
+                ret.append(s[i-9:i+1])
+    return ret
+
+#Binary Tree Right Side View
+#Tag:Tree, Depth-first Search, Breadth-first Search
+def rightSideView(root):
+    def collect(root, ret, level):
+        if root == None:
+            return ret
+        if level == len(ret):
+            ret.append(root.val)
+        collect(root.right, ret, level+1)
+        collect(root.left, ret, level+1)
+        return ret
+        
+    return collect(root, [], 0)
+
+
+#Number of Islands
+#Tag:Depth-first Search, Breadth-first Search, Union Find
+def numIslands(grid):
+    def sink(x, y):
+        if not (0 <= x < len(grid) and 0 <= y < len(grid[0]) and grid[x][y] == '1'):
+            return 0
+        grid[x][y] = '*'
+        map(sink, (x,x,x+1,x-1), (y-1,y+1,y,y))
+        return 1
+        
+    return sum(sink(x,y) for x in xrange(len(grid)) for y in xrange(len(grid[0])))
+
+#Bitwise AND of Numbers Range
+#Tag:Bit Manipulation
+def rangeBitwiseAnd(m, n):
+    while n != 0 and n > m:
+        n &= n-1
+    return n
+
+#Course Schedule
+#Tag: Depth-first Search, Breadth-first Search, Graph, Topological Sort
+def courseScheduleBFS(numCourses, prerequisites):
+    degree = [0] * numCourses
+    links = {}
+    for pair in prerequisites:
+        degree[pair[1]] += 1
+        if not links.has_key(pair[0]):
+            links[pair[0]] = []
+        links[pair[0]].append(pair[1])
+        
+    queue = [i for i in xrange(numCourses) if degree[i] == 0]
+    while queue:
+        idx = queue.pop(0)
+        if not links.has_key(idx):
+            continue
+        adj = links[idx]
+        for i in xrange(len(adj)):
+            degree[adj[i]] -= 1
+            if degree[adj[i]] == 0:
+                queue.append(adj[i])
+          
+    return sum(degree) == 0 if len(degree) else False
+
+def courseScheduleDFS(numCourses, prerequisites):
+    def dfs(i, graphic, visited):
+        if visited[i] == 1:
+            return True
+        if visited[i] == -1:
+            return False
+
+        visited[i] = -1
+        for n in graphic[i]:
+            ret = dfs(n, graphic, visited)
+            if ret == False:
+                return False
+        visited[i] = 1
+        return True
+
+    graphic = {x:[] for x in xrange(numCourses)}
+    visited = [0] * numCourses
+    for x,y in prerequisites:
+        graphic[x].append(y)
+
+    for i in xrange(numCourses):
+        if not dfs(i, graphic, visited):
+            return False
+
+    return True if numCourses else False
+
+
+#Implement Trie (Prefix Tree)
+#Tag:Trie, Design
+class TrieNode(object):
+    def __init__(self):
+        self.end = False
+        self.lst = [None] * 26
+        
+class Trie(object):
+
+    def __init__(self):
+        self.root = TrieNode()
+
+    def insert(self, word):
+        node, i = self.find(word, True)
+        node.end = True
+            
+    def find(self, word, create):
+        node = self.root
+        if len(word) == 0:
+            return node, 0
+        for i in xrange(len(word)):
+            idx = ord(word[i]) - ord('a')
+            if node.lst[idx] == None:
+                if create:
+                    node.lst[idx] = TrieNode()
+                else:
+                    return node, i
+            node = node.lst[idx]
+        return node, len(word)
+            
+    def search(self, word):
+        node, i = self.find(word, False)
+        return node.end and i == len(word)
+
+
+    def startsWith(self, prefix):
+        node, i = self.find(prefix, False)
+        return i == len(prefix)
+
+#Minimum Size Subarray Sum
+#Tag: Array, Two Pointers, Binary Search
+def minSubArrayLen(s, nums):
+    if not nums or sum(nums) < s:
+        return 0
+
+    left = sumVal = 0
+    ret = len(nums)
+    for i in xrange(len(nums)):
+        sumVal += nums[i]
+        while sumVal >= s:
+            ret = min(i - left + 1, ret)
+            sumVal -= nums[left]
+            left += 1
+            
+    return ret
