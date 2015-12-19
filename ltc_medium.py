@@ -42,28 +42,28 @@ def lengthOfLongestSubstring(s):
         ret = max(ret, i - pt + 1)
 
     return ret
-	
-	
+    
+    
 #Longest Palindromic Substring
 def longestPalindrome(s):
-	def check(s, a, b):
-		while a < b:
-			if s[a] != s[b]:
-				return False
-			a += 1
-			b -= 1
-		return True
-		
-	i = l = 0
-	for j in xrange(0, len(s)):
-		if check(s, j-l, j):
-			i = j - l
-			l += 1
-		elif j - l - 1>=0 and check(s, j-l-1, j):
-			i = j - l - 1
-			l += 2
-			
-	return s[i:i + l]
+    def check(s, a, b):
+        while a < b:
+            if s[a] != s[b]:
+                return False
+            a += 1
+            b -= 1
+        return True
+        
+    i = l = 0
+    for j in xrange(0, len(s)):
+        if check(s, j-l, j):
+            i = j - l
+            l += 1
+        elif j - l - 1>=0 and check(s, j-l-1, j):
+            i = j - l - 1
+            l += 2
+            
+    return s[i:i + l]
 
 #Container With Most Water 
 def maxArea(height):
@@ -278,15 +278,15 @@ def searchRange(nums, target):
 
 #Search Insert Position
 def searchInsert(nums, target):
-	lo, hi = 0, len(nums)
-	while lo < hi:
-		mid = lo + (hi - lo) / 2
-		if nums[mid] < target:
-			lo = mid + 1
-		else:
-			hi = mid
+    lo, hi = 0, len(nums)
+    while lo < hi:
+        mid = lo + (hi - lo) / 2
+        if nums[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
 
-	return lo
+    return lo
             
 
 #Combination Sum 
@@ -359,7 +359,7 @@ def multiplyString(num1, num2):
 def permute(nums):
     if not nums:
         return []
-		
+        
     ret = [ [] ]
     for n in nums:
         temp = []
@@ -1741,32 +1741,6 @@ def courseScheduleBFS(numCourses, prerequisites):
           
     return sum(degree) == 0 if len(degree) else False
 
-def courseScheduleDFS(numCourses, prerequisites):
-    def dfs(i, graphic, visited):
-        if visited[i] == 1:
-            return True
-        if visited[i] == -1:
-            return False
-
-        visited[i] = -1
-        for n in graphic[i]:
-            ret = dfs(n, graphic, visited)
-            if ret == False:
-                return False
-        visited[i] = 1
-        return True
-
-    graphic = {x:[] for x in xrange(numCourses)}
-    visited = [0] * numCourses
-    for x,y in prerequisites:
-        graphic[x].append(y)
-
-    for i in xrange(numCourses):
-        if not dfs(i, graphic, visited):
-            return False
-
-    return True if numCourses else False
-
 
 #Implement Trie (Prefix Tree)
 #Tag:Trie, Design
@@ -1823,3 +1797,937 @@ def minSubArrayLen(s, nums):
             left += 1
             
     return ret
+
+#Course Schedule II
+#Tag:Depth-first Search, Breadth-first Search, Graph, Topological Sort
+def courseScheduleFindCourses(numCourses, prerequisites):
+    def dfs(i, visited, graph, ret):
+        if visited[i] == 1:
+            return True
+        if visited[i] == -1:
+            return False
+            
+        visited[i] = -1
+        for n in graph[i]:
+            if not dfs(n, visited, graph, ret):
+                return False
+        ret.append(i)
+                
+        visited[i] = 1
+        return True
+        
+    visited = [0] * numCourses
+    graph = {x:[] for x in xrange(numCourses)}
+    for p in prerequisites:
+        graph[p[1]].append(p[0])
+        
+    ret = []
+    for i in xrange(numCourses):
+        if not dfs(i, visited, graph, ret):
+            return []
+            
+    return ret[::-1]
+
+#Kth Largest Element in an Array
+#Tag: Divide and Conquer, Heap
+def findKthLargest(nums, k):
+    def search(lst, lo, hi, idx):
+        if hi - lo < 1:
+            return -1
+        left, pt, right = lo, lo, hi - 1
+        val = lst[lo]
+        while pt <= right:
+            if lst[pt] == val:
+                pt += 1
+            elif lst[pt] > val:
+                lst[left], lst[pt] = lst[pt], lst[left]
+                left += 1
+                pt += 1
+            else:
+                lst[right], lst[pt] = lst[pt], lst[right]
+                right -= 1
+                
+        if left <= idx <= right:
+            return lst[idx]
+        elif left > idx:
+            return search(lst, lo, left, idx)
+        return search(lst, pt, hi, idx)
+        
+    return search(nums, 0, len(nums), k-1)
+
+import heapq
+def findKthLargest2(nums, k):
+    heap = []
+    for n in nums:
+        if len(heap) == k:
+            heapq.heappushpop(heap, n)
+        else:
+            heapq.heappush(heap, n)
+    return heapq.heappop(heap) if heap else 0
+
+
+#Contains Duplicate III
+#Tag: Binary Search Tree
+def containsNearbyAlmostDuplicate(nums, k, t):
+    if not nums or k <= 0 or t < 0:
+        return False
+        
+    mp = {}
+    for i, val in enumerate(nums):
+        bucket = val/(t + 1)
+        for idx in xrange(bucket-1, bucket+2):
+            if mp.has_key(idx) and abs(mp[idx] - val) <= t:
+                return True
+        mp[bucket] = val
+        if i >= k:
+            del mp[nums[i-k]/(t+1)]
+    
+    return False
+
+#Bulls and Cows
+#Tag: Hash Table
+def bullsAndCow(secret, guess):
+    cnt, a, b = [0] * 10, 0, 0
+    for i in xrange(len(secret)):
+        x, y = int(secret[i]), int(guess[i])
+        if x == y:
+            a += 1
+        else:
+            b += (cnt[x] < 0) + (cnt[y] > 0)
+            cnt[x] += 1
+            cnt[y] -= 1
+
+    return "%dA%dB" % (a, b)
+
+#Longest Increasing Subsequence
+#Tag: Dynamic Programming Binary Search
+def lengthOfLIS(nums):
+    def search(lst, lo, hi, target):
+        if hi - lo < 1:
+            return lo
+        mid = lo + (hi - lo)/2
+        return search(lst, mid+1, hi, target) if lst[mid] < target else search(lst, lo, mid, target)
+        
+    seq = []
+    for n in nums:
+        pos = search(seq, 0, len(seq), n)
+        if pos >= len(seq):
+            seq.append(n)
+        else:
+            seq[pos] = min(seq[pos], n)
+            
+    return len(seq)
+
+#Number of Digit One
+#Tag: Math
+def countDigitOne(n):
+    ret, m = 0, 1
+    while m <= n:
+        b, a, c = n/m/10, n%m, n/m % 10
+        ret += (b + (c > 1)) * m + (c == 1) * (a + 1)
+        m *= 10
+    return ret
+
+#Count Complete Tree Nodes
+#Tag:Tree, Binary Search
+def countCompleteTreeNodes(root):
+    def leftCnt(root):
+        cnt = 0
+        while root:
+            cnt += 1
+            root = root.left
+        return cnt
+            
+    if not root:
+        return 0
+        
+    l, r = leftCnt(root.left), leftCnt(root.right)
+    if l == r:
+        return (1 << l) + countCompleteTreeNodes(root.right)
+    return (1 << r) + countCompleteTreeNodes(root.left)
+
+#Remove Invalid Parentheses
+#Tag:Depth-first Search, Breadth-first Search
+def removeInvalidParentheses(s):
+    def check(s):
+        n = 0
+        for c in s:
+            n = n + 1 if c == '(' else n - 1 if c == ')' else n
+            if n < 0:
+                return False
+        return n == 0
+            
+    queue = {s}
+    ret = []
+    while queue:
+        ret = filter(check, queue)
+        if ret:
+            return ret
+        queue = {s[:i] + s[i+1:] for s in queue for i in xrange(len(s))}
+    
+    return ret
+
+#Maximal Square
+#Tag: Dynamic Programming
+def maximalSquare(matrix):
+    if not matrix:
+        return 0
+        
+    m, n = len(matrix), len(matrix[0])
+    dp = [[0 for y in xrange(n+1)] for x in xrange(m+1)]
+    maxVal = 0
+    for i in xrange(1, m+1):
+        for j in xrange(1, n+1):
+            if matrix[i-1][j-1] == '1':
+                dp[i][j] = min(dp[i-1][j-1], dp[i-1][j], dp[i][j-1]) + 1
+                maxVal = max(maxVal, dp[i][j])
+
+    return maxVal * maxVal
+
+#Basic Calculator
+#Tag:Stack, Math
+def basicCalculator(s):
+    nums, ops = [], []
+    num = rst = 0
+    sign = 1
+
+    for c in s:
+        if c == ' ':
+            continue
+        elif c.isdigit():
+            num = num * 10 + int(c)
+        elif c == '(':
+            nums.append(rst)
+            ops.append(sign)
+            num = rst = 0
+            sign = 1
+        elif c == ')':
+            num = rst + sign * num
+            sign, rst = ops.pop(), nums.pop()
+        else:
+            rst += sign * num
+            num = 0
+            sign = [-1, 1][c == '+']
+            
+    return rst + sign * num
+
+#Basic Calculator II
+#Tag:String
+def basicCalculator2(s):
+    num, op, stack = 0, '+', [0]
+    ops = {'+':lambda x, y: y, '-':lambda x, y: -y, '*':lambda x, y: x*y, '/':lambda x, y: (int)(float(x)/float(y))}
+    for i, c in enumerate(s):
+        if c.isdigit():
+            num = num * 10 + int(c)
+        if not c.isdigit() and c != ' ' or i == len(s)-1:
+            prev = 0 if op in '+-' else stack.pop()
+            stack.append(ops[op](prev, num))
+            num, op = 0, c
+    return sum(stack)
+
+#Range Sum Query - Immutable
+#Tag:Dynamic Programming
+class NumArray(object):
+    def __init__(self, nums):
+        self.dp = nums
+        for i in xrange(1, len(nums)):
+            self.dp[i] += self.dp[i-1]
+
+    def sumRange(self, i, j):
+        return self.dp[j] - (self.dp[i-1] if i > 0 else 0)
+
+
+#Majority Element II
+#Tag:Array
+def majorityElement2(nums):
+    a, b = None, None
+    cnt1, cnt2 = 0, 0
+    for n in nums:
+        if n == a:
+            cnt1 += 1
+        elif n == b:
+            cnt2 += 1
+        elif cnt1 == 0:
+            a = n
+            cnt1 += 1
+        elif cnt2 == 0:
+            b = n
+            cnt2 += 1
+        else:
+            cnt1 -= 1
+            cnt2 -= 1
+
+    cnt1 = cnt2 = 0
+    for n in nums:
+        if n == a:
+            cnt1 += 1
+        elif n == b:
+            cnt2 += 1
+
+    return ([a] if cnt1 > len(nums)/3 else [])  + ([b] if cnt2 > len(nums)/3 else [])
+
+#Lowest Common Ancestor of a Binary Tree
+#Tag: tree
+def lowestCommonAncestor(root, p, q):
+    if root == None or root == p or root == q:
+        return root
+    l, r = lowestCommonAncestor(root.left, p, q), lowestCommonAncestor(root.right, p, q)
+    return root if l and r else l or r 
+
+
+#Delete Node in a Linked List
+#Tag: Linked list
+def deleteNode(node):
+    node.val = node.next.val
+    node.next = node.next.next
+    
+def deleteNode2(head, idx):
+    dummy = linked_list.Node(-1)
+    dummy.next = head
+    prev = dummy
+    while head and idx:
+        prev = head
+        head = head.next
+        idx -= 1
+    if head == None:
+        return dummy.next
+    prev.next = head.next
+    return dummy.next
+
+#Product of Array Except Self
+#Tag: Array
+def productExceptSelf(nums):
+    size = len(nums)
+    out = [1] * size
+    t1 = t2 = 1
+    for i in xrange(size-1):
+        t1 *= nums[i]
+        t2 *= nums[size-1-i]
+        out[i+1] *= t1
+        out[size - i - 2] *= t2
+        
+    return out
+        
+
+#Search a 2D Matrix II
+#Tag:Divide and Conquer, Binary Search
+def searchMatrix2(matrix, target):
+    if not matrix:
+        return False
+
+    i = 0
+    j = len(matrix[0]) - 1
+    while i < len(matrix) and j >= 0:
+        if matrix[i][j] == target:
+            return True
+        elif matrix[i][j] < target:
+            i += 1
+        else:
+            j -= 1
+            
+    return False
+
+#Different Ways to Add Parentheses
+#Tag:  Divide and Conquer
+def diffWaysToCompute(input):
+    def collect(s, cache):
+        ops = {'+':lambda x, y:x+y, '-':lambda x, y:x-y, '*':lambda x, y:x*y}
+        ret = []
+        if 1 != 2:
+            for i, c in enumerate(s):
+                if c in '+-*':
+                    for p in collect(s[:i], cache):
+                        for n in collect(s[i+1:], cache):
+                            ret.append(ops[c](p, n))
+                        
+            if not ret:
+                ret.append(int(s))
+            
+            
+        return ret
+        
+    return collect(input, {})
+
+
+#Ugly Number
+#Tag: Math
+def isUgly(num):
+    for x in 2,3,5:
+        while num > 0 and num % x == 0:
+            num /= x
+    return num == 1
+
+#Sliding Window Maximum
+#Tag: Heap
+def maxSlidingWindow(nums, k):
+    queue = []
+    ret = []
+    for i in xrange(len(nums)):
+        if queue and queue[0] <= i - k:
+            queue.pop(0)
+        while queue and nums[queue[-1]] < nums[i]:
+            queue.pop()
+        queue.append(i)
+            
+        if i >= k - 1:
+            ret.append(nums[queue[0]])
+            
+    return ret
+
+#Ugly Number II
+#Tag:Dynamic Programming, Heap, Math
+def nthUglyNumber(n):
+    ret = [1]
+    a, b, c = 2, 3, 5
+    i, j, k = 0, 0, 0 
+    while len(ret) < n:
+        v1, v2, v3 = a *ret[i], b * ret[j], c * ret[k]
+        val = min(v1, v2, v3)
+        i += 1 if val == v1 else 0
+        j += 1 if val == v2 else 0
+        k += 1 if val == v3 else 0
+        ret.append(val)
+        
+    return ret[-1]
+
+#Perfect Squares
+#Tag:  Dynamic Programming, Breadth-first Search, Math
+def perfectSquares(n):
+    if n <= 0:
+        return 0
+    lst = []
+    i = 1
+    while i * i <= n:
+        lst.append(i * i)
+        i += 1
+        
+    queue = {n}
+    level = 0
+    while queue:
+        temp = set()
+        level += 1
+        for x in queue:
+            for y in lst:
+                if x < y:
+                    break
+                if x == y:
+                    return level
+                temp.add(x-y)
+        queue = temp
+            
+    return level
+
+def perfectSquares2(n):
+    if n <= 0:
+        return 0
+    
+    dp = [65535] * (n + 1)
+    dp[0] = 0
+    for i in xrange(1, n+1):
+        minVal = None
+        for j in xrange(1, i+1):
+            val = j * j
+            if val <= i:
+                minVal = min(minVal, dp[i - val] + 1) if minVal else (dp[i- val] + 1)
+        dp[i] = minVal
+        
+    return dp[-1]
+
+
+#Best Time to Buy and Sell Stock with Cooldown
+def maxProfitWithCooldown(prices):
+    if len(prices) <= 1:
+        return 0
+        
+    buy = [0] * len(prices)
+    sell = [0] * len(prices)
+    buy[0] = -prices[0]
+    buy[1] = max(-prices[0], -prices[1])
+    sell[1] = max(0, prices[1] + buy[0])
+    for i in xrange(2, len(prices)):
+        buy[i] = max(buy[i-1], sell[i-2] - prices[i])
+        sell[i] = max(prices[i] + buy[i-1], sell[i-1])
+        
+    return sell[-1]
+
+#Regular Expression Matching
+#Tag:Dynamic Programming, Backtracking, String
+def reMatch2(s, p):
+    def match(s, p, mp):
+        if not p:
+            return not s
+            
+        if not mp.has_key(tuple([s, p])):
+            ret = False
+            if len(p) > 1 and p[1] == '*':
+                ret = match(s, p[2:], mp) or ( (len(s) > 0 and (s[0] == p[0] or p[0] == '.')) and match(s[1:], p, mp) )
+            elif p[0] not in '.*':
+                ret = len(s) > 0 and s[0] == p[0] and match(s[1:], p[1:], mp)
+            elif p[0] == '.':
+                ret = len(s) > 0 and match(s[1:], p[1:], mp)
+            mp[tuple([s, p])] = ret
+        
+        return mp[tuple([s, p])]
+
+    return match(s, p, {})
+
+def reMatch(s, p):
+    m, n = len(s), len(p)
+    dp = [[False] * (n + 1) for x in xrange(m + 1)] 
+    dp[0][0] = True
+    for i in xrange(m+1):
+        for j in xrange(1, n + 1):
+            if p[j-1] == '*':
+                dp[i][j] = dp[i][j-2] or (i > 0 and (s[i-1] == p[j-2] or p[j-2] == '.') and dp[i-1][j])
+            else:
+                dp[i][j] = i > 0 and (dp[i-1][j-1] and (s[i-1] == p[j-1] or p[j-1] == '.'))
+    
+    return dp[m][n]
+
+#Best Time to Buy and Sell Stock IV
+#Tag: Dynamic Programming
+def maxProfitWithKTransactions(k, prices):
+    if k == 0:
+        return 0
+        
+    if k >= len(prices)/2:
+        ret = 0
+        for i in xrange(1, len(prices)):
+            ret += max(0, prices[i] - prices[i-1])
+        return ret
+        
+    dp = [[0] * (len(prices) + 1) for x in xrange(k + 1)]
+    for i in xrange(1, k + 1):
+        temp = -prices[0]
+        for j in xrange(1, len(prices)):
+            dp[i][j] = max(dp[i][j-1], temp + prices[j])
+            temp = max(temp, dp[i-1][j] - prices[j])
+            
+    return dp[k][len(prices)-1]
+
+
+
+#Find Median from Data Stream
+#Tag:  Heap, Design
+class MedianFinder:
+    def __init__(self):
+        self.heaps = [], []
+
+    def addNum(self, num):
+        small, large = self.heaps
+        heapq.heappush(small, -heapq.heappushpop(large, num))
+        if len(small) > len(large):
+            heapq.heappush(large, -heapq.heappop(small))
+
+    def findMedian(self):
+        small, large = self.heaps
+        return (-small[0] + large[0]) * 1.0 / 2 if len(small) == len(large) else large[0]
+
+#Reverse Nodes in k-Group
+#Tag: Linked list
+def reverseKGroup(head, k):
+    cnt = 0
+    cur = head
+    while cur and cnt < k:
+        cur = cur.next
+        cnt += 1
+        
+    if cnt == k:
+        cur = reverseKGroup(cur, k)
+        while cnt > 0:
+            cnt -= 1
+            temp = head.next
+            head.next = cur
+            cur = head
+            head = temp
+        head = cur
+    
+    return head
+
+#Longest Substring with At Most Two Distinct Characters
+#Tag:Hash Table, Two Pointers, String
+def lengthOfLongestSubstringTwoDistinct(s):
+    x, j, k = 0, -1, 0
+    ret = 0
+    for i in xrange(1, len(s)):
+        if s[i] == s[i-1]:
+            continue
+        if j >= 0 and s[j] != s[i]:
+           ret = max(ret, i - x)
+           x = j + 1
+        j = i - 1
+        
+    return max(ret, len(s) - x)
+
+
+
+#Read N Characters Given Read4 II - Call multiple times
+#Tag:String
+class BuffReader:
+    def __init__(self):
+        self.buffer = ['', '', '', '']
+        self.bPos = 0
+        self.cnt = 0
+
+    def read(self, buf, n, read4):
+        pos = 0
+        while pos < n:
+            if self.bPos == 0:
+                self.cnt = read4(self.buffer)
+            if self.cnt == 0:
+                break
+            while pos < n and self.bPos < self.cnt:
+                buf[pos] = self.buffer[self.bPos]
+                pos += 1
+                self.bPos += 1
+            
+            self.bPos %= self.cnt
+            
+        return pos
+
+#Edit Distance
+#Tag: Dynamic Programming, String
+def editDistance(word1, word2):
+    m, n = len(word1), len(word2)
+    dp = [[0] * (n + 1) for x in xrange(m + 1)]
+    for i in xrange(n + 1):
+        dp[0][i] = i
+    for i in xrange(m + 1):
+        dp[i][0] = i
+    for i in xrange(1, m + 1):
+        for j in xrange(1, n + 1):
+            if word1[i-1] == word2[j-1]:
+                dp[i][j] = dp[i-1][j-1]
+            else:
+                dp[i][j] = min(dp[i][j-1], dp[i-1][j], dp[i-1][j-1]) + 1
+                
+    return dp[-1][-1]
+
+#Super Ugly Number
+#Tag: Math, Heap
+def nthSuperUglyNumber(n, primes):
+    uglys = [1]
+    def gen(prime):
+            for i in uglys:
+                yield prime * i
+    merged = heapq.merge(*map(gen, primes))
+    while len(uglys) < n:
+        i = next(merged)
+        if i != uglys[-1]:
+            uglys.append(i)
+                
+    return uglys[-1]
+
+#One Edit Distance
+#Tag: String
+def isOneEditDistance(s, t):
+    if s == t:
+        return False
+    i = 0
+    while i < len(s) and i < len(t):
+        if s[i] != t[i]:
+            break
+        i += 1
+    return s[i+1:] == t[i:] or s[i:] == t[i + 1:] or s[i+1:] == t[i+1:]
+
+
+#Missing Ranges
+#Tag: Array
+def findMissingRanges(nums, lower, upper):
+    prev = lower - 1
+    ret = []
+    for i in xrange(len(nums) + 1):
+        nxt = upper + 1 if i == len(nums) else nums[i]
+        if prev + 2 == nxt:
+            ret.append('%d' % (prev + 1))
+        elif prev + 2 < nxt:
+            ret.append('%d->%d' % (prev + 1, nxt - 1))
+        prev = nxt
+    return ret
+
+
+#Reverse Words in a String II
+#Tag: String
+def reverseWordsInplace(s):
+    def reverse(s, i, j):
+        while i < j:
+            s[i], s[j] = s[j], s[i]
+            i += 1
+            j -= 1
+    reverse(s, 0, len(s)-1)
+    i = 0
+    while i < len(s):
+        j = i
+        while i < len(s) and s[i] != ' ':
+            i += 1
+        reverse(s, j, i-1)
+        i += 1
+
+#Binary Tree Vertical Order Traversal
+#Tag: Hash Table
+def verticalOrder(root):
+    import collections
+    mp = collections.defaultdict(list)
+    queue = [(root, 0)]
+    for node, i in queue:
+        if node:
+            mp[i].append(node.val)
+            queue += (node.left, i-1), (node.right, i+1)
+    return [mp[i] for i in sorted(mp.keys())]
+
+#Count of Smaller Numbers After Self
+#Tag: Divide and Conquer, Binary Indexed Tree, Segment Tree, Binary Search Tree
+def countSmaller(nums):
+    def sort(nums, ret):
+        if len(nums) <= 1:
+            return nums
+            
+        mid = len(nums)/2
+        left, right = sort(nums[:mid], ret), sort(nums[mid:], ret)
+        i = j = 0
+        while i < len(left) or j < len(right):
+            v1 = left[i][1] if i < len(left) else float('inf')
+            v2 = right[j][1] if j < len(right) else float('inf')
+            if v1 <= v2:
+                nums[i + j] = left[i]
+                if i < len(left):
+                    ret[left[i][0]] += j
+                i += 1
+            else:
+                nums[i + j] = right[j]
+                j += 1
+
+        return nums
+        
+    ret = [0] * len(nums)
+    sort([p for p in enumerate(nums)], ret)
+    return ret
+
+#Remove Duplicate Letters
+#Tag: Stack, Greedy
+import collections
+def removeDuplicateLetters(s):
+    if not s:
+        return ""
+    cnt = collections.Counter(list(s))
+    pos = 0
+    for i, c in enumerate(s):
+        if c < s[pos]:
+            pos = i
+        cnt[c] -= 1
+        if cnt[c] == 0:
+            break
+    return s[pos] + removeDuplicateLetters(s[pos:].replace(s[pos], ''))
+
+
+#Shortest Word Distance II
+#Tag: Hash Table, Design
+import collections
+class WordDistance(object):
+    def __init__(self, words):
+        self.words = collections.defaultdict(list)
+        for i, word in enumerate(words):
+            self.words[word].append(i)
+
+    def shortest(self, word1, word2):
+        lst1, lst2 = self.words[word1], self.words[word2]
+        i1 = i2 = 0
+        ret = float('inf')
+        while i1 < len(lst1) and i2 < len(lst2):
+            val1, val2 = lst1[i1], lst2[i2]
+            if val1 < val2:
+                i1 += 1
+            else:
+                i2 += 1
+            ret = min(ret, abs(val1 - val2))
+        return ret
+
+#todo: Range Sum Query - Mutable
+
+#Strobogrammatic Number
+#Tag: Hash Table, Math
+def isStrobogrammatic(num):
+    return all(num[i] + num[~i] in '696 00 11 88' for i in range(len(num)/2+1))
+
+#Strobogrammatic Number II
+#Tag: Math, Recursion
+def findStrobogrammatic(n):
+    pairs = "00 11 88 69 96"
+    
+    def helper(n, m):
+        if n == 0:
+            return [""]
+        if n == 1:
+            return [x[0] for x in pairs.split()[:-2]]
+            
+        prev = helper(n-2, m)
+        ret = []
+        for item in prev:
+            for pair in pairs.split():
+                if n == m and pair == '00':
+                    continue
+                ret.append(pair[0] + item + pair[1])
+        return ret
+        
+    return helper(n, n)
+
+def countStrobogrammatic(n):
+    if n == 0:
+        return 0
+    if n == 1:
+        return 3
+    ret = 4 * (5**(n/2 - 1))
+    if n % 2 == 0:
+        return ret
+    return ret * 3
+
+#Group Shifted Strings
+#Tag:Hash Table, String
+def groupStrings(strings):
+    mp = collections.defaultdict(list)
+    for s in strings:
+        mp[tuple([(ord(c) - ord(s[0])) % 26 for c in s])].append(s)
+    return map(sorted, mp.values())
+
+#Count Univalue Subtrees
+#Tag: Tree
+def countUnivalSubtrees(root):
+    def collect(root):
+        if root == None:
+            return True
+        
+        l, r = collect(root.left), collect(root.right)
+        
+        vL = root.left.val if root.left else root.val
+        vR = root.right.val if root.right else root.val
+        if root.val == vL == vR and l and r:
+            cnt[0] += 1
+            return True
+        return False
+
+    cnt = [0]
+    collect(root)
+    return cnt[0]
+
+#Meeting Rooms II
+#Tag:Heap, Greedy, Sort
+def minMeetingRooms(intervals):
+    mp = collections.defaultdict(int)
+    for x, y in intervals:
+        mp[x] += 1
+        mp[y] -= 1
+
+    ret = cnt = 0
+    for i in sorted(mp.keys()):
+        cnt += mp[i]
+        ret = max(ret, cnt)
+    return ret
+
+#Factor Combinations
+#Tag:  Backtracking
+def getFactors(n):
+    todo, combis = [(n, 2, [])], []
+    while todo:
+        n, i, combi = todo.pop()
+        while i * i <= n:
+            if n % i == 0:
+                combis += combi + [i, n/i],
+                todo += (n/i, i, combi+[i]),
+            i += 1
+    return combis
+
+def getFactors2(n):
+    def factor(n, i, combi, combis):
+        while i * i <= n:
+            if n % i == 0:
+                combis += combi + [i, n/i],
+                factor(n/i, i, combi+[i], combis)
+            i += 1
+        return combis
+    return factor(n, 2, [], [])
+
+#Maximum Product of Word Lengths
+#Tag:  Bit Manipulation
+def maxProductOfWordLength(words):
+    def mask(s):
+        return reduce(lambda x, y: x | y, [1 << (ord(c) - ord('a')) for c in s], 0)
+    lst = sorted(map(lambda x: (mask(x), len(x)), words), cmp = lambda x, y: cmp(x[1], y[1]), reverse = True)
+    
+    ret = 0
+    for i in xrange(len(lst)):
+        for j in xrange(1 + i, len(lst)):
+           if lst[i][0] & lst[j][0] == 0:
+               ret = max(lst[i][1] * lst[j][1], ret)
+               break
+           
+    return ret
+
+#Paint House
+#Tag: Dynamic Programming
+def paintHouse(costs):
+    for i in xrange(1, len(costs)):
+        costs[i][0] += min(costs[i-1][1], costs[i-1][2])
+        costs[i][1] += min(costs[i-1][0], costs[i-1][2])
+        costs[i][2] += min(costs[i-1][1], costs[i-1][0])
+        
+    return min(costs[-1][0], costs[-1][1], costs[-1][2]) if costs else 0
+
+
+#Verify Preorder Sequence in Binary Search Tree
+#Tag: Tree, Stack
+def verifyPreorder1(preorder):
+    stack = []
+    low = float('-inf')
+    for p in preorder:
+        if p < low:
+            return False
+        while stack and stack[-1] < p:
+            low = stack.pop()
+        stack.append(p)
+    return True
+
+def verifyPreorder2(preorder):
+    low = float('-inf')
+    i = -1
+    for p in preorder:
+        if p < low:
+            return False
+        while i >= 0 and preorder[i] < p:
+            low = preorder[i]
+            i -= 1
+        i += 1
+        preorder[i] = p
+       
+    return True
+
+#Burst Balloons
+#Tag:Divide and Conquer, Dynamic Programming
+def maxCoins(nums):
+    nums = [1] + [i for i in nums if i > 0] + [1]
+    n = len(nums)
+    if not n:
+        return 0
+        
+    dp = [[0] * n for x in xrange(n)]
+    for k in xrange(2, n):
+        for left in xrange(0, n-k):
+            right = left + k
+            for i in xrange(left+1, right):
+                dp[left][right] = max(dp[left][right], nums[i] * nums[left] * nums[right] + dp[left][i] + dp[i][right])
+                
+    return dp[0][-1]
+            
+#3Sum Smaller
+#Tag:Array, Two Pointers
+def threeSumSmaller(nums, target):
+    nums.sort()
+    count = 0
+    for k in range(len(nums)):
+        i, j = 0, k - 1
+        while i < j:
+            if nums[i] + nums[j] + nums[k] < target:
+                count += j - i
+                i += 1
+            else:
+                j -= 1
+    return count
